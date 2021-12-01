@@ -22,6 +22,7 @@
 #----------------------------------------------------------------------------------------
 # - Restart the account  
 # - Move of data to the new rawData directory
+#----------------------------------------------------------------------------------------
 
 # Get the absolute path to the directory including images and data 
 #----------------------------------------------------------------------------------------
@@ -32,9 +33,6 @@ if (length (args) == 0) {
 } else if (length (args) >= 1) {
   # default output file
   path       = args [1]
-  imagesPath = args [2]
-  dataPath   = args [3]
-  gsPostsKey = args [4]
 } else {
   stop ("Error: Too many command line arguments supplied to R.")
 }
@@ -42,8 +40,6 @@ if (length (args) == 0) {
 # Output the paths at run-time to confirm that they were found
 #----------------------------------------------------------------------------------------
 print (path)
-print (imagesPath)
-print (dataPath)
 
 # Set the working directory
 #----------------------------------------------------------------------------------------
@@ -66,7 +62,7 @@ if (!existsFunction ('as_date')) suppressPackageStartupMessages (library ('lubri
 #source  (sprintf ('%srScripts/checkMorphology.R',       path))
 #source  (sprintf ('%srScripts/checkCommunity.R',        path))
 #source  (sprintf ('%srScripts/generateInteractivity.R', path))
-source (sprintf ('%srScripts/updateData.R', path)))
+source (sprintf ('%srScripts/updateData.R', path))) # It would be better to run this inpedentently!
 print ('Dependencies loaded.')
 
 # Source basic data and stats for the trees

@@ -1,0 +1,13 @@
+# configuration file for the Harvard Forest Witness Tree bot
+
+# set path to the witnessTree directory 
+WITNESSTREEPATH='/media/HarvardForestWitnessTree/'
+
+# Google sheets key for posts and data
+GoogleSheetsPostsKey='1FpQMKnD4GSBkKgs2CqWEEm002c7DxNVzFnDkdGK5L7I'
+
+# Twitter API passwords
+TwitterConsumerKey='consumerkey'
+TwitterConsumerSecret='consumersecret'
+TwitterAccessToken='accesstoken'
+TwitterAccessTokenSecret='accesstokensecret'

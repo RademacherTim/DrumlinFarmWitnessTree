@@ -10,17 +10,17 @@ source ${WITNESSTREEPATH}config
 if [ $? != 0 ]
 then
    # write error message into log
-   echo 'Error: Could not source config.' >> ${WITNESSTREEPATH}tmp/logfile.txt 
+   echo 'Error: Could not source config.' >> ${WITNESSTREEPATH}logs/logFileWitnessTree.txt 
    exit 1 # terminate script and indicate error
 fi
 
-# Run the witnessTree RScript to generate messages
+# Run the witnessTree R script to generate messages
 #----------------------------------------------------------------------------------------
-Rscript ${WITNESSTREEPATH}RScripts/witnessTree.R ${WITNESSTREEPATH} ${IMAGESPATH} ${DATAPATH} ${GSPostsKey}
+Rscript ${WITNESSTREEPATH}rScripts/witnessTree.R ${WITNESSTREEPATH} ${GSPostsKey}
 if [ $? != 0 ]
 then 
    # write error message into log
-   echo 'Error: witnessTree.R did not execute.' >> ${WITNESSTREEPATH}tmp/logfile.txt 
+   echo 'Error: witnessTree.R did not execute.' >> ${WITNESSTREEPATH}logs/logFileWitnessTree.txt 
    exit 1 # terminate script and indicate error
 fi
 
@@ -30,11 +30,11 @@ python ${WITNESSTREEPATH}pythonScripts/witnessTreeBot.py ${consumer_key} ${consu
 if [ $? != 0 ]
 then 
    # write error message into log
-   echo 'Error: witnessTreeBot.py did not execute.' >> ${WITNESSTREEPATH}tmp/logfile.txt 
+   echo 'Error: witnessTreeBot.py did not execute.' >> ${WITNESSTREEPATH}logs/logFileWitnessTree.txt 
    exit 1 # terminate script and indicate error
 fi
 
 # Write time and date into log file in the tmp/ folder
 #----------------------------------------------------------------------------------------
 DATE=$(date +%Y-%m-%d" "%H:%M:%S)
-echo ${DATE} >> ${WITNESSTREEPATH}tmp/logfile.txt
+echo ${DATE} >> ${WITNESSTREEPATH}logs/logFileWitnessTree.txt
