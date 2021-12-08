@@ -16,7 +16,7 @@ fi
 
 # Run the witnessTree R script to generate messages
 #----------------------------------------------------------------------------------------
-Rscript ${WITNESSTREEPATH}rScripts/witnessTree.R ${WITNESSTREEPATH} ${GSPostsKey}
+Rscript ${WITNESSTREEPATH}code/rScripts/witnessTree.R ${WITNESSTREEPATH} ${GSPostsKey}
 if [ $? != 0 ]
 then 
    # write error message into log
@@ -26,7 +26,7 @@ fi
 
 # Run bot to post generated messages to twitter and facebook
 #----------------------------------------------------------------------------------------
-python ${WITNESSTREEPATH}pythonScripts/witnessTreeBot.py ${consumer_key} ${consumer_secret} ${access_token} ${access_token_secret} ${page_access_token} ${facebook_page_id} ${WITNESSTREEPATH}
+python ${WITNESSTREEPATH}code/pythonScripts/witnessTreeBot.py ${consumer_key} ${consumer_secret} ${access_token} ${access_token_secret} ${page_access_token} ${facebook_page_id} ${WITNESSTREEPATH}
 if [ $? != 0 ]
 then 
    # write error message into log

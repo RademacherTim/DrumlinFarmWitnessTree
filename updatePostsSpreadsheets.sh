@@ -14,30 +14,20 @@ source ${WITNESSTREEPATH}config
 if [ $? != 0 ]
 then
    # write error message into log
-   echo ${DATE} 'Error: Could not source config.' >> ${WITNESSTREEPATH}logs/logFileDataUpdate.txt 
+   echo ${DATE} 'Error: Could not source config.' >> ${WITNESSTREEPATH}logs/logFileSpreadsheetUpdate.txt 
    exit 1 # terminate script and indicate error
 fi
 
-# Run the updateClimateData R script to download climate data
+# Run the updatePostsSpreadsheet.R script to download the post spreadsheet
 #----------------------------------------------------------------------------------------
-Rscript ${WITNESSTREEPATH}code/rScripts/updateClimateData.R ${WITNESSTREEPATH}
-if [ $? != 0 ]
+Rscript ${WITNESSTREEPATH}code/rScripts/updatePostsSpreadsheet.R ${WITNESSTREEPATH} ${GoogleSheetsPostsKey}
+if [ $? != 0 ] # add condition so that this in only run once a day
 then 
    # write error message into log
-   echo ${DATE} 'Error: Climate data download was not successful.' >> ${WITNESSTREEPATH}logs/logFileDataUpdate.txt 
-   exit 1 # terminate script and indicate error
-fi
-
-# Run the updatePhenoData R script to download phenocam data and images 
-#----------------------------------------------------------------------------------------
-Rscript ${WITNESSTREEPATH}code/rScripts/updatePhenoData.R ${WITNESSTREEPATH}
-if [ $? != 0 ]
-then 
-   # write error message into log
-   echo ${DATE} 'Error: Phenocam data download was not successful.' >> ${WITNESSTREEPATH}logs/logFileDataUpdate.txt 
+   echo ${DATE} 'Error: Post spreadsheet download was not successful.' >> ${WITNESSTREEPATH}logs/logFileSpreadsheetUpdate.txt 
    exit 1 # terminate script and indicate error
 fi
 
 # Write time and date into log file in the tmp/ folder
 #----------------------------------------------------------------------------------------
-echo ${DATE} >> ${WITNESSTREEPATH}logs/logFileDataUpdate.txt
+echo ${DATE} 'All smooth.' >> ${WITNESSTREEPATH}logs/logFileSpreadsheetUpdate.txt

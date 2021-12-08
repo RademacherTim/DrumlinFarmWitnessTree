@@ -5,7 +5,7 @@
 # Harvard Forest.
 #---------------------------------------------------------------------------------------
 
-# Get arguments from command line (i.e., absolute path and Google API key)
+# get arguments from command line (i.e., absolute path to working directory)
 #----------------------------------------------------------------------------------------
 args = commandArgs (trailingOnly = TRUE)
 if (length (args) == 0) {
@@ -13,40 +13,18 @@ if (length (args) == 0) {
         call. = FALSE)
 } else if (length (args) >= 1) {
   path                 = args [1] # absolute path
-  GoogleSheetsPostsKey = args [2] # Google API key
 } else {
   stop ("Error: Too many command line arguments supplied to R.")
 }
 print (path)
-print (GoogleSheetsPostsKey)
 
 # Load module specific dependencies
 #----------------------------------------------------------------------------------------
 if (!existsFunction ('esat'))      suppressPackageStartupMessages (library ('plantecophys')) # for calculation of vapour pressure deficit
-if (!existsFunction ('drive_rm'))  suppressPackageStartupMessages (library ('googledrive')) # for download of google sheet
 if (!existsFunction ('as_date'))   suppressPackageStartupMessages (library ('lubridate'))
 if (!existsFunction ('cols'))      suppressPackageStartupMessages (library ('readr'))
 if (!existsFunction ('tibble'))    suppressPackageStartupMessages (library ('tibble'))
 if (!existsFunction ('summarise')) suppressPackageStartupMessages (library ('dplyr'))
-
-# Download the posts spreadsheet and saves it as postDetails.csv in tmp directory
-#----------------------------------------------------------------------------------------
-# TR - I ought to include more checks to make sure that it is only updated rather than 
-#      downloaded each time.
-IOStatus <- suppressMessages (
-  googledrive::drive_download (file = googledrive::as_id (GoogleSheetsPostsKey), 
-                               path = sprintf ('%stmp/postsDetails.csv', path),
-                               type = 'csv',
-                               overwrite = TRUE)
-)
-
-# Verify that download worked properly
-#----------------------------------------------------------------------------------------
-if (exists ('IOStatus')) {
-  rm (IOStatus)
-} else {
-  stop ("Error: Google Sheets with post messages was not properly downloaded.")
-} 
 
 # Read climate data from the appropriate weather station
 #----------------------------------------------------------------------------------------
@@ -202,5 +180,5 @@ readr::write_csv (x = yearlyPrec, file = sprintf ('%sdata/yearlyPrec.csv', path)
 # delete temporary variables
 #----------------------------------------------------------------------------------------
 rm (met_HF_current, met_HF_gap, met_HF_old, met_HF_shaler, rehu, wind, dates, dates2, 
-    path, GoogleSheetsPostsKey)
+    path)
 #========================================================================================

@@ -13,7 +13,7 @@
 #                   Shawna Greyeyes, Bijan Seyednasrollah for their invaluable 
 #                   contributions.
 #
-# Last update: 2021-12-01
+# Last update: 2021-12-08
 #
 #----------------------------------------------------------------------------------------
 
@@ -52,17 +52,16 @@ if (!existsFunction ('as_date')) suppressPackageStartupMessages (library ('lubri
 
 # Source functions
 #----------------------------------------------------------------------------------------
-#source  (sprintf ('%srScripts/postHandling.R',          path))
-#source  (sprintf ('%srScripts/checkEvents.R',           path))
-#source  (sprintf ('%srScripts/checkClimate.R',          path))
-#source  (sprintf ('%srScripts/calcSapFlow.R',           path))
-#source  (sprintf ('%srScripts/calcRadialGrowth.R',      path))
-#source  (sprintf ('%srScripts/checkPhysiology.R',       path))
-#source  (sprintf ('%srScripts/checkPhenology.R',        path))
-#source  (sprintf ('%srScripts/checkMorphology.R',       path))
-#source  (sprintf ('%srScripts/checkCommunity.R',        path))
-#source  (sprintf ('%srScripts/generateInteractivity.R', path))
-source (sprintf ('%srScripts/updateData.R', path))) # It would be better to run this inpedentently!
+source  (sprintf ('%scode/rScripts/postHandling.R',          path))
+#source  (sprintf ('%scode/rScripts/checkEvents.R',           path))
+#source  (sprintf ('%scode/rScripts/checkClimate.R',          path))
+#source  (sprintf ('%scode/rScripts/calcSapFlow.R',           path))
+#source  (sprintf ('%scode/rScripts/calcRadialGrowth.R',      path))
+#source  (sprintf ('%scode/rScripts/checkPhysiology.R',       path))
+#source  (sprintf ('%scode/rScripts/checkPhenology.R',        path))
+#source  (sprintf ('%scode/rScripts/checkMorphology.R',       path))
+#source  (sprintf ('%scode/rScripts/checkCommunity.R',        path))
+#source  (sprintf ('%scode/rScripts/generateInteractivity.R', path))
 print ('Dependencies loaded.')
 
 # Source basic data and stats for the trees
