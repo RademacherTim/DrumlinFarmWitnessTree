@@ -45,15 +45,15 @@ for (s in siteNames) {
   
   # download the very last available image for each camera 
   #----------------------------------------------------------------------------------
-  #phenocamServer <- 'http://phenocam.sr.unh.edu/data/archive/'
-  #filePath <- paste0 (phenocamServer, s,'/',lubridate::year (Sys.Date ()),'/',
-  #                    lubridate::month (Sys.Date ()),'/',s,'_', 
-  #                    as.character (Sys.time (), format = '%Y_%m_%d_%H%M%S'),'.jpg')
-  #download.file (filePath,
-  #               destfile = paste0 (path,'images/',s,'_PhenoCamImageRecent.jpg'),
-  #               mode = 'wb',
-  #               quiet = TRUE)
-
+  if (s == 'witnesstree') {
+    phenocamServer <- 'http://phenocam.sr.unh.edu/data/latest/'
+    recentImgFilePath <- paste0 (phenocamServer, s,'.jpg')
+    download.file (recentImgFilePath,
+                   destfile = paste0 (path,'images/',s,'_PhenoCamImageRecent.jpg'),
+                   mode = 'wb',
+                   quiet = TRUE)
+  }
+  
   # getting the timeseries from the phenocam server
   #--------------------------------------------------------------------------------------
   gcc_temp <- tail (get_pheno_ts (s, 

@@ -130,6 +130,7 @@ getPostDetails <- function (fName) {
   # load dependencies
   #--------------------------------------------------------------------------------------
   if (!existsFunction ('read_excel')) library ('readxl')
+  if (!existsFunction ('add_column')) library ('tibble')
   
   # get posts spreadsheet
   #--------------------------------------------------------------------------------------
@@ -193,8 +194,8 @@ getPostDetails <- function (fName) {
     # Add the image path to the figureName, so that the bot can actually find them
     # N.B. This has to be overwritten for monthlyEngagementReminders and monthlyRadGrowthSummary
     #------------------------------------------------------------------------------------
-    postDetails [['FigureName']] <- sprintf ('%s%s', imagesPath, 
-                                             postDetails [['FigureName']])
+    postDetails [['FigureName']] <- paste0 (path,'images/', 
+                                            postDetails [['FigureName']])
   } else {
     postDetails [['fFigure']] <- FALSE
   }
