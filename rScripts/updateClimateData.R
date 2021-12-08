@@ -5,7 +5,7 @@
 # Harvard Forest.
 #---------------------------------------------------------------------------------------
 
-# get arguments from command line (i.e., absolute path and Google API key)
+# Get arguments from command line (i.e., absolute path and Google API key)
 #----------------------------------------------------------------------------------------
 args = commandArgs (trailingOnly = TRUE)
 if (length (args) == 0) {
@@ -170,14 +170,14 @@ rehu <- add_column (rehu, day = format (rehu [['TIMESTAMP']], '%Y-%m-%d'))
 dailyReHu <- rehu %>% group_by (day) %>% dplyr::summarise (relativeHumidity = mean (relativeHumidity, na.rm = T))
 dailyReHu <- dailyReHu [!is.na (dailyReHu [['day']]), ]
 
-# calculate daily vapour pressure deficit
+# Calculate daily vapour pressure deficit
 #----------------------------------------------------------------------------------------
 dailyVPD <- tibble (day = dailyReHu [['day']],
                     VPS = RHtoVPD (RH = dailyReHu [['relativeHumidity']],
                                    TdegC = dailyAirt [['airt']] [dailyAirt [['day']] >= dailyReHu [['day']] [1]],
                                    Pa = 101)) # Should make pressure a variable as well.
 
-# write csv files of the main variables
+# Write csv files of the main variables
 #----------------------------------------------------------------------------------------
 readr::write_csv (x = airt, file = sprintf ('%sdata/airt.csv', path))
 readr::write_csv (x = gust, file = sprintf ('%sdata/gust.csv', path))
