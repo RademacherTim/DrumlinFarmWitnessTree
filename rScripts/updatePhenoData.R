@@ -70,7 +70,7 @@ for (s in siteNames) {
 
 # write a local file of the phenological data in the data directory
 #----------------------------------------------------------------------------------------
-write_csv (x = gcc, file = '../data/gcc.csv')
+write_csv (x = gcc, file = paste0 (path, 'data/gcc.csv'))
 
 # clean-up
 #----------------------------------------------------------------------------------------

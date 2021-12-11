@@ -10,7 +10,7 @@ DATE=$(date +%Y-%m-%d" "%H:%M:%S)
 
 # Read WITNESSTREEPATH from config file
 #----------------------------------------------------------------------------------------
-source ${WITNESSTREEPATH}config
+source ${WITNESSTREEPATH}code/config
 if [ $? != 0 ]
 then
    # write error message into log

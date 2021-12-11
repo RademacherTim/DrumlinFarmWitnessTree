@@ -16,7 +16,7 @@ if (length (args) == 0) {
 } else {
   stop ("Error: Too many command line arguments supplied to R.")
 }
-print (path)
+#print (path)
 
 # Load module specific dependencies
 #----------------------------------------------------------------------------------------
