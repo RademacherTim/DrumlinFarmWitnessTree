@@ -21,7 +21,8 @@
 # To-do list:
 #----------------------------------------------------------------------------------------
 # - Restart the account  
-# - Move of data to the new rawData directory
+# - Install dendrometer and sapflow sensor
+# - Reintegrate dendrometer and sapflow sensor into messaging
 #----------------------------------------------------------------------------------------
 
 # get the absolute path to the directory including images and data 
@@ -39,7 +40,7 @@ if (length (args) == 0) {
 
 # output the paths at run-time to confirm that they were found
 #----------------------------------------------------------------------------------------
-print (path)
+#print (path)
 
 # set the working directory and path to R scripts
 #----------------------------------------------------------------------------------------
@@ -53,16 +54,16 @@ if (!existsFunction ('as_date')) suppressPackageStartupMessages (library ('lubri
 
 # source functions
 #----------------------------------------------------------------------------------------
-source  (paste0 (rPath, 'postHandling.R')) # TR - Sources fine but need to check all functions
+source  (paste0 (rPath, 'postHandling.R')) # TR - Sources fine but ought to check all functions
 source  (paste0 (rPath, 'checkEvents.R'))   
 source  (paste0 (rPath, 'checkClimate.R'))
-source  (paste0 (rPath, 'calcSapFlow.R'))    # TR - Needs testing
-source  (paste0 (rPath, 'calcRadialGrowth.R')) # TR - Needs testing
-source  (paste0 (rPath, 'checkPhysiology.R')) # TR - Needs testing
-source  (paste0 (rPath, 'checkPhenology.R')) # TR - Needs testing
-source  (paste0 (rPath, 'checkMorphology.R')) # TR - Needs testing
-source  (paste0 (rPath, 'checkCommunity.R')) # TR - Needs testing
-source  (paste0 (rPath, 'generateInteractivity.R')) # TR - Needs testing
+#source  (paste0 (rPath, 'calcSapFlow.R'))    # TR - Needs sapflow sensor and data
+#source  (paste0 (rPath, 'calcRadialGrowth.R')) # TR - Needs dendrometer
+source  (paste0 (rPath, 'checkPhysiology.R')) 
+source  (paste0 (rPath, 'checkPhenology.R'))
+source  (paste0 (rPath, 'checkMorphology.R'))
+source  (paste0 (rPath, 'checkCommunity.R'))
+#source  (paste0 (rPath, 'generateInteractivity.R')) # TR - Needs testing
 print ('Dependencies loaded.')
 
 # source basic data and stats for the trees
@@ -131,11 +132,10 @@ posts <- monthlyClimateSummary     (posts) # Summarise and compare last month's 
 posts <- checkFrost (posts) # Check for first frost of autumn and late frost in the 
                             # early growing season.
 posts <- checkHeatWave       (posts) # Check for a heat wave.
-
-# TR - I got this far on the 2021-12-08
 posts <- checkStorm          (posts) # Check for storm or rather a windy day.
 posts <- checkHourlyRainfall (posts) # Check for hourly rainfall above 3.0mm.
-posts <- checkDailyRainfall  (posts) # Check for daily rainfall above 20.0mm.
+# TR - checkDailyRainfall() relies on dendrometer, which needs re-installing 
+# posts <- checkDailyRainfall  (posts) # Check for daily rainfall above 20.0mm.
 print ('Climatic conditions have been checked.')
 
 # generate new posts concerning the morphology of the tree
@@ -145,25 +145,27 @@ posts <- explainDimensions (posts)
 # generate new posts concerning the community surrounding the tree
 #----------------------------------------------------------------------------------------
 posts <- explainSeedDispersal      (posts) # give background on seed dispersal between 
-# 1st of September and end of November
+                                           # 1st of September and end of November
 posts <- explainGypsyMothHerbivory (posts) # give background on gypsy moths between 15th 
-# of May and end of August
+                                           # of May and end of August
 posts <- explainGallWasps          (posts) # give background about galls
-posts <- checkCommunityWildlife    (posts)
+posts <- checkCommunityWildlife    (posts, TEST = 1) # TR - Needs retesting once the wildlife images are in folder 
 print ('Community related messages have been checked.')
 
 # generate new posts concerning physiology
 #----------------------------------------------------------------------------------------
-posts <- monthlyRadGrowthSummary (posts)
-posts <- checkWoodGrowthUpdate   (posts)
+#posts <- monthlyRadGrowthSummary (posts) # TR - Needs dendrometer data 
+#posts <- checkWoodGrowthUpdate   (posts) # TR - Needs dendrometer data
 posts <- checkWaxyCuticle        (posts)
 print ('Physiological conditions have been checked.')
 
 # generate new posts concerning phenology
 #----------------------------------------------------------------------------------------
-posts <- checkLeafColourChange (posts)
+posts <- checkLeafColourChange (posts) # TR - Works but the gcc threshold may need to be 
+                                       # re-adjusted. I need to plot gcc to figure this out. 
 print ('Phenological conditions have been checked.')
 
+# TR - This is how far I got with checking on the 2021-12-11 
 # generate interactive responses
 #----------------------------------------------------------------------------------------
 IOStatus <- generateInteractiveResponses ()

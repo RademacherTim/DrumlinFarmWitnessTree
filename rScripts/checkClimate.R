@@ -772,7 +772,7 @@ monthlyClimateSummary <- function (ptable, TEST = 0) {
     delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7))
     expirDate <- sprintf ("%s 23:59:59 %s", 
                           format (Sys.Date () + delay, format = '%Y-%m-%d'), 
-                          treeTimeZone) %>% lubridate::as_datetime () 
+                          treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone) 
     ptable    <- add_row (ptable, 
                           priority   = postDetails [["Priority"]], 
                           fFigure    = postDetails [["fFigure"]],
@@ -985,7 +985,7 @@ checkFrost <- function (ptable, TEST = 0) {
     delay     <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7))
     expirDate <- sprintf ("%s 23:59:59 %s", 
                           format (Sys.Date () + delay, format = '%Y-%m-%d'), 
-                          treeTimeZone) %>% lubridate::as_datetime ()
+                          treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone)
     ptable    <- add_row (ptable, 
                           priority    = postDetails [["Priority"]], 
                           fFigure     = postDetails [['fFigure']],
@@ -1038,7 +1038,7 @@ checkHeatWave <- function (ptable, TEST = 0) {
     delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7))
     expirDate <- sprintf ("%s 23:59:59 %s", 
                           format (Sys.Date () + delay, format = '%Y-%m-%d'), 
-                          treeTimeZone) %>% lubridate::as_datetime ()
+                          treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone)
     ptable    <- add_row (ptable, 
                           priority    = postDetails [["Priority"]], 
                           fFigure     = postDetails [["fFigure"]],
@@ -1088,7 +1088,9 @@ checkStorm <- function (ptable, TEST = 0){
   }
   
   if (STORM) {
-    expirDate <- sprintf ("%s 23:59:59 %s", format (Sys.Date () + delay, format = '%Y-%m-%d'), treeTimeZone) 
+    expirDate <- sprintf ("%s 23:59:59 %s", 
+                          format (Sys.Date () + delay, format = '%Y-%m-%d'), 
+                          treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone)
     ptable    <- add_row (ptable, 
                           priority    = postDetails [["Priority"]], 
                           fFigure     = postDetails [["fFigure"]],
@@ -1126,7 +1128,9 @@ checkHourlyRainfall <- function (ptable, TEST = 0) {
       message <- postDetails [['MessageText']]
     }
     delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7)) * 60.0 * 60.0
-    expirDate <- sprintf ("%s %s", format (Sys.time () + delay, format = '%Y-%m-%d %H:%M:%S'), treeTimeZone) 
+    expirDate <- sprintf ("%s %s", 
+                          format (Sys.time () + delay, format = '%Y-%m-%d %H:%M:%S'), 
+                          treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone)
     ptable    <- add_row (ptable, 
                           priority    = postDetails [['Priority']], 
                           fFigure     = postDetails [['fFigure']],
@@ -1169,7 +1173,9 @@ checkDailyRainfall <- function (ptable, TEST = 0) {
     message <- sprintf (postDetails [['MessageText']], 
                         round (max (radGrowth [['dailyGrowth']], na.rm = TRUE), 2))
     delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7)) * 60.0 * 60.0 * 24.0
-    expirDate <- sprintf ("%s %s", format (Sys.time () + delay, format = '%Y-%m-%d %H:%M:%S'), treeTimeZone) 
+    expirDate <- sprintf ("%s %s", 
+                          format (Sys.time () + delay, format = '%Y-%m-%d %H:%M:%S'), 
+                          treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone)
     ptable    <- add_row (ptable, 
                           priority    = postDetails [['Priority']], 
                           fFigure     = postDetails [['fFigure']],
