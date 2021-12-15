@@ -63,7 +63,7 @@ source  (paste0 (rPath, 'checkPhysiology.R'))
 source  (paste0 (rPath, 'checkPhenology.R'))
 source  (paste0 (rPath, 'checkMorphology.R'))
 source  (paste0 (rPath, 'checkCommunity.R'))
-#source  (paste0 (rPath, 'generateInteractivity.R')) # TR - Needs testing
+source  (paste0 (rPath, 'generateInteractivity.R'))
 print ('Dependencies loaded.')
 
 # source basic data and stats for the trees
@@ -149,7 +149,7 @@ posts <- explainSeedDispersal      (posts) # give background on seed dispersal b
 posts <- explainGypsyMothHerbivory (posts) # give background on gypsy moths between 15th 
                                            # of May and end of August
 posts <- explainGallWasps          (posts) # give background about galls
-posts <- checkCommunityWildlife    (posts, TEST = 1) # TR - Needs retesting once the wildlife images are in folder 
+posts <- checkCommunityWildlife    (posts) # post about visitors from the wildlife camera  
 print ('Community related messages have been checked.')
 
 # generate new posts concerning physiology
@@ -165,7 +165,6 @@ posts <- checkLeafColourChange (posts) # TR - Works but the gcc threshold may ne
                                        # re-adjusted. I need to plot gcc to figure this out. 
 print ('Phenological conditions have been checked.')
 
-# TR - This is how far I got with checking on the 2021-12-11 
 # generate interactive responses
 #----------------------------------------------------------------------------------------
 IOStatus <- generateInteractiveResponses ()
@@ -201,7 +200,7 @@ if (dim (post) [1] == 1) {
                                                     !is.nan (pastPostDates)])
   lastPostDateTime <- tail (pastPostDates [!is.na (pastPostDates)], n = 1)
   
-  # check that there was a post in the past week at all
+  # check whether there was a post in the past week at all
   #--------------------------------------------------------------------------------------
   if (length (lastPostDateTime) == 0) lastPostDateTime <- Sys.time () - 7 * 24 * 60 * 60
   
@@ -214,9 +213,10 @@ if (dim (post) [1] == 1) {
     posts <- rbind (posts, post)
     print ('We already had more than 7 posts in the last 7 days!')
     
-    # check whether the bot has posted in the last four hours
-    #------------------------------------------------------------------------------------
-  } else if (as.duration (Sys.time () - lastPostDateTime) / dhours (1) < 4.0 &
+  # check whether the bot has posted in the last four hours
+  #--------------------------------------------------------------------------------------
+  } else if (lubridate::as.duration (Sys.time () - lastPostDateTime) / 
+             lubridate::dhours (1) < 4.0 &
              post [['priority']] != 10) {
     # add post back to posts tibble, as it will not be posted right now
     #------------------------------------------------------------------------------------
@@ -231,7 +231,7 @@ if (dim (post) [1] == 1) {
     #------------------------------------------------------------------------------------
     if (dim (post) [1] > 0) {
       write_csv (x    = post,
-                 path = sprintf ('%sposts/%s.csv', path,
+                 file = sprintf ('%sposts/%s.csv', path,
                                  format (Sys.time (), "%Y-%m-%d_%H")),
                  na   = "")
     }
@@ -242,13 +242,14 @@ if (dim (post) [1] == 1) {
 #----------------------------------------------------------------------------------------
 if (dim (posts) [1] > 0) {
   write_csv (x    = posts,
-             path = sprintf ('%sposts/posts.csv', path))
+             file = sprintf ('%sposts/posts.csv', path))
 }
 
 # write to log files
 #----------------------------------------------------------------------------------------
-write_csv (x         = as.data.frame (sprintf ('%s', format (Sys.time (), "%Y-%m-%d %H:%M"))),
-           path      = sprintf ('%sposts/logfile.csv', path),
+write_csv (x         = as.data.frame (sprintf ('%s', 
+                                               format (Sys.time (), "%Y-%m-%d %H:%M"))),
+           file      = sprintf ('%slogs/logFileWitnessTreeRCode.csv', path),
            col_names = FALSE,
            append    = TRUE)
 

@@ -934,68 +934,86 @@ annualClimateSummary <- function (ptable, TEST = 0) {
   return (ptable)
 }
 
-# Check for first frost event of the year and late frosts during the growing season
+# check for first frost event of the year and late frosts during the growing season
 #----------------------------------------------------------------------------------------
 checkFrost <- function (ptable, TEST = 0) {
   
-  # Assume there has been no frost
+  # was there a frost today (calendar day)?
   #--------------------------------------------------------------------------------------
-  FROST <- FALSE
+  if (min (airt [['airt']] [airt [['day']] == Sys.Date ()], na.rm = TRUE) < 0.0) {
   
-  # Check for first frost (after July)
-  #--------------------------------------------------------------------------------------
-  if ((substring (Sys.Date (), 6, 10) >= '07-31' & min (tail (airt [['airt']], n = 4*5), na.rm = TRUE) < 0.0) | 
-      TEST == 1) {
-    postDetails <- getPostDetails ('checkFrost - first')
-    FROST <- TRUE
-  }
-  
-  # Check for late frosts (after April and with at least three preceeding frost-free days)
-  #--------------------------------------------------------------------------------------
-  if ((substring (Sys.Date (), 6, 10) >= '05-01' &         # after April
-       substring (Sys.Date (), 6, 10) <= '08-01' &         # before August
-       tail (airt [['airt']], n = 1) < 0.0 &               # frost, aka air temperature below freezing
-       sum (airt [['airt']] [airt [['day']] >= format (Sys.Date () - 3, '%Y-%m-%d') & 
-                             airt [['day']] <  format (Sys.Date (),     '%Y-%m-%d') & 
-                             !is.na  (airt [['airt']])                                &
-                             !is.nan (airt [['airt']])] <= 0.0, na.rm = T) < 1 )| # no frost in preceeding three days
-      TEST == 2) {                                        # or we are testing
-    postDetails <- getPostDetails ('checkFrost - late')
-    FROST <- TRUE
-  }
-  
-  # Determine number of preceeding frost free days
-  #--------------------------------------------------------------------------------------
-  if (FROST) {
-    frostFreeDays <- 0 
-    NOFROST <- TRUE
-    while (NOFROST) { # go back in time
-      # Select only temperatures during the day prior to the last checked day
-      temps <- airt [['airt']] [airt [['day']] >= format (Sys.Date () - (frostFreeDays), '%Y-%m-%d')]
-      if (sum (temps < 0.0, na.rm = T) > 0.0) {
-        NOFROST = FALSE
-      } else {
-        frostFreeDays <- frostFreeDays + 1
-      }
+    # by default there is no frost-related message
+    #------------------------------------------------------------------------------------
+    FROST <- FALSE
+    
+    # was this the first frost of the autumn (after July)
+    #------------------------------------------------------------------------------------
+    memory <- read_csv (paste0 (path, 'code/memory.csv'), col_types = cols ())
+    if ((substring (Sys.Date (), 6, 10) >= '07-31' & memory [['autumnFrosts']] < 2) | 
+        TEST == 1) {
+      postDetails <- getPostDetails ('checkFrost - first')
+      FROST <- TRUE
+    } else if (substring (Sys.Date (), 6, 10) >= '07-31') {
+      memory [['autumnFrosts']] <- memory [['autumnFrosts']] + 1
+      write_csv (memory, file = paste0 (path, 'code/memory.csv'))
+    }
+    
+    # reset the autumnal frost counter on the 1st of January each year 
+    #------------------------------------------------------------------------------------
+    if (lubridate::month (Sys.Date ()) == 1 & lubridate::day (Sys.Date ()) == 1) {
+      memory [['autumnFrost']] <- 0
     } 
     
-    # Compose post details
+    # check for late frosts (after April and with at least three preceding frost-free days)
     #------------------------------------------------------------------------------------
-    message   <- sprintf (postDetails [['MessageText']],  frostFreeDays) 
-    delay     <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7))
-    expirDate <- sprintf ("%s 23:59:59 %s", 
-                          format (Sys.Date () + delay, format = '%Y-%m-%d'), 
-                          treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone)
-    ptable    <- add_row (ptable, 
-                          priority    = postDetails [["Priority"]], 
-                          fFigure     = postDetails [['fFigure']],
-                          figureName  = postDetails [["FigureName"]], 
-                          message     = message, 
-                          hashtags    = postDetails [["Hashtags"]], 
-                          expires     = expirDate)
+    if ((substring (Sys.Date (), 6, 10) >= '05-01' & # after April
+         substring (Sys.Date (), 6, 10) <= '08-01' & # before August
+         # below checks whether there was no frost in preceding three days
+         sum (airt [['airt']] [airt [['day']] >= format (Sys.Date () - 3, '%Y-%m-%d') & 
+                               airt [['day']] <  format (Sys.Date (),     '%Y-%m-%d') & 
+                               !is.na  (airt [['airt']])                              &
+                               !is.nan (airt [['airt']])] <= 0.0, na.rm = T) < 1) | 
+        TEST == 2) {                                        # or we are testing
+      postDetails <- getPostDetails ('checkFrost - late')
+      FROST <- TRUE
+    }
+    
+    # remainder only needs running if we have a frost-related message
+    #------------------------------------------------------------------------------------
+    if (FROST) {
+    # determine number of preceding frost-free days
+    #------------------------------------------------------------------------------------
+      frostFreeDays <- 0 
+      NOFROST <- TRUE
+      while (NOFROST) { # go back in time
+        # select only temperatures during the day prior to the last checked day
+        temps <- airt [['airt']] [airt [['day']] >= format (Sys.Date () - (frostFreeDays), '%Y-%m-%d')]
+        if (sum (temps < 0.0, na.rm = T) > 0.0) {
+          NOFROST = FALSE
+        } else {
+          frostFreeDays <- frostFreeDays + 1
+        }
+      } 
+      
+      # compose post details
+      #----------------------------------------------------------------------------------
+      message   <- sprintf (postDetails [['MessageText']],  frostFreeDays) 
+      delay     <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7))
+      expirDate <- sprintf ("%s 23:59:59 %s", 
+                            format (Sys.Date () + delay, format = '%Y-%m-%d'), 
+                            treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone)
+      ptable    <- add_row (ptable, 
+                            priority    = postDetails [["Priority"]], 
+                            fFigure     = postDetails [['fFigure']],
+                            figureName  = postDetails [["FigureName"]], 
+                            message     = message, 
+                            hashtags    = postDetails [["Hashtags"]], 
+                            expires     = expirDate)
+    }
   }
   
   # return the appropriate posts details
+  #--------------------------------------------------------------------------------------
   return (ptable)
 }
 
