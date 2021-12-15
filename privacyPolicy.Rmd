@@ -13,12 +13,12 @@ source ('rScripts/treeStats.R')
 
 The Witness Tree social media app (on Twitter and Facebook) does not collect any of your personal data.
 
-In fact, the app is built to do the opposite. We work to share our data with you in a way that (we hope) is educational and entertaining.
+In fact, the app is built to do the opposite. We work to share our data with you in a way that (we hope) is educational and entertaining and easily digestible. 
 
-Given that we do not collect your data, we also have nothing we could share with third parties and no third parties are involved in this project. 
+Given that we do not collect your data, we also have nothing we could share with third parties and no third parties are directly involved in this project (e.g., we have complete creative freedom, although most of the time we lack resources for implementation of our grandios ideas). 
 
 However, because we are geeky scientists, we love data, so we do actually look at the analytics of the social media pages that are part of the Witness Tree project, to figure out what type of content is most engaging to you, and thus to improve the way we communicate.
 
-The Witness Tree app was developed to educate scientists and non-scientists alike about life as a tree in our changing environment.
+The Witness Tree app was developed to educate scientists and non-scientists alike about life as a tree in a changing environment.
 
-If you want to reach us to learn more about how the app works or have any other questions about the Harvard Forest Witness Tree project, go to `r treeWebPage` or email us at `r contactEmail`. We would love to hear from you!
+If you want to reach us to learn more about how the app works or have any other questions about the Witness Tree project, go to `r treeWebPage` or email us at `r contactEmail`. We would love to hear from you!
