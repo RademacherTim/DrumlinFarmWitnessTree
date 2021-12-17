@@ -31,7 +31,10 @@ checkLeafColourChange <- function (ptable, TEST = 0) {
     
     # set site threshold (n.b. this needs to vary by sites)
     #------------------------------------------------------------------------------------
-    siteGCCThreshold <- 0.35 # TR - This threshold does not seem to work anymore. Check for camera shift! 
+    siteGCCThreshold <- 0.35 # threshold is roughly fine for the DB ROI of the 
+                             # harvardbarn and harvardbarn2 camera, but not for the 
+                             # witness tree, where a reasonable value would be closer to 
+                             # 0.365 
     
     # get phenocam data
     #------------------------------------------------------------------------------------

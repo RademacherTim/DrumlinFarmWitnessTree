@@ -409,7 +409,7 @@ monthlyEngagementReminder <- function (ptable, TEST = 0) {
     ptable      <- add_row (ptable, 
                             priority    = postDetails [["Priority"]],
                             fFigure     = postDetails [['fFigure']],
-                            figureName  = sprintf ('%s/tmp/%s.jpg', path, FigureName), 
+                            figureName  = paste0 (path,'images/',FigureName,'.jpg'), 
                             message     = message, 
                             hashtags    = postDetails [["Hashtags"]], 
                             expires     = expiresIn (delay)) 

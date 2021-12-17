@@ -1034,7 +1034,7 @@ checkHeatWave <- function (ptable, TEST = 0) {
   # check for a heatwave 
   #-------------------------------------------------------------------------------------#
   if ((tail (dailyMaxAirt [['airt']], n = 1)               > percentile90th & 
-       head (tail (dailyMaxAirt [['airt']], n = 2), n = 1) > percentile90th) | TEST == 1) {
+       head (tail (dailyMaxAirt [['airt']], n = 2), n = 1) > percentile90th) | TEST >= 1) {
     
     # count days since the start of the heatwave
     #-------------------------------------------------------------------------------------#
@@ -1049,9 +1049,16 @@ checkHeatWave <- function (ptable, TEST = 0) {
       }
     }
     
-    # parse message and expiration date
-    #-------------------------------------------------------------------------------------#
-    postDetails <- getPostDetails ('checkHeatWave')
+    # obtain posts details depending on time of year, i.e. summer (5-9) vs other
+    #------------------------------------------------------------------------------------
+    if (lubridate::month (Sys.Date ()) %in% 5:9 | TEST == 1) {
+      postDetails <- getPostDetails ('checkHeatWave - summer')
+    } else if (lubridate::month (Sys.Date ()) %in% c (1:4, 10:12) | TEST == 2) {
+      postDetails <- getPostDetails ('checkHeatWave - other')
+    }
+    
+    # parse message details and expiration date
+    #------------------------------------------------------------------------------------
     message   <- sprintf (postDetails [['MessageText']], heatWaveDays, lubridate::month (Sys.Date (), label = T, abbr = F)) 
     delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7))
     expirDate <- sprintf ("%s 23:59:59 %s", 
@@ -1067,12 +1074,13 @@ checkHeatWave <- function (ptable, TEST = 0) {
   }
   
   # return the appropriate post details
+  #--------------------------------------------------------------------------------------
   return (ptable)
 }
 
 # Check for a windy day/storm (i.e. day with max windspeed above 15 m/s)
 #----------------------------------------------------------------------------------------
-checkStorm <- function (ptable, TEST = 0){
+checkStorm <- function (ptable, TEST = 0) {
   
   # Set Storm boolean to FALSE by default
   #--------------------------------------------------------------------------------------
