@@ -20,6 +20,8 @@
 
 # To-do list:
 #----------------------------------------------------------------------------------------
+# - Solve issue pertaining to memory file
+# - Improve the weekly check-list
 # - Restart the account  
 # - Install dendrometer and sapflow sensor
 # - Reintegrate dendrometer and sapflow sensor into messaging
@@ -40,7 +42,7 @@ if (length (args) == 0) {
 
 # output the paths at run-time to confirm that they were found
 #----------------------------------------------------------------------------------------
-print (paste0 (Sys.time (), ';  (1) Path loaded: ',path,'.'))
+print (paste0 (Sys.time (), '; rScritps: (1.1)  Path loaded: ',path,'.'))
 
 # set the working directory and path to R scripts
 #----------------------------------------------------------------------------------------
@@ -64,18 +66,18 @@ source  (paste0 (rPath, 'checkPhenology.R'))
 source  (paste0 (rPath, 'checkMorphology.R'))
 source  (paste0 (rPath, 'checkCommunity.R'))
 source  (paste0 (rPath, 'generateInteractivity.R'))
-print (paste0 (Sys.time (), ';  (2) Dependencies loaded.'))
+print (paste0 (Sys.time (), '; rScripts: (1.2)  Dependencies loaded.'))
 
 # source basic data and stats for the trees
 #----------------------------------------------------------------------------------------
 source  (paste0 (rPath, 'treeStats.R'))
-print (paste0 (Sys.time (), ';  (3) Basic stats loaded.'))
+print (paste0 (Sys.time (), '; rScritps: (1.3)  Basic stats loaded.'))
 
 # read in previously generated posts, if not first iteration
 #----------------------------------------------------------------------------------------
 if (file.exists (paste0 (path, 'posts/posts.csv'))) {
   posts <- read_csv (paste0 (path, 'posts/posts.csv'), 
-                     col_names = T, col_types = c ('ilcccD'))
+                     col_names = T, col_types = c ('ilcccT'))
 } else { # create a tibble for posts
   posts <- tibble (priority    = 0,  # priority of message to be posted (int; 
                    # between 0 for low and 10 for highest)
@@ -83,20 +85,20 @@ if (file.exists (paste0 (path, 'posts/posts.csv'))) {
                    figureName  = '', # text string with the figure name.  
                    message     = '', # the message itself (char) 
                    hashtags    = '', # hastags going with the message (char)
-                   expires     = lubridate::as_date (Sys.Date ()) - 1e5) # expiration date of the message
+                   expires     = lubridate::as_datetime (Sys.Date ()) - 1e5) # expiration date of the message
   names (posts) <- c ('priority','fFigure','figureName','message','hashtags','expires')
 }
-print (paste0 (Sys.time (), ';  (4) Previous messages read.'))
+print (paste0 (Sys.time (), '; rScritps: (1.4)  Previous messages read.'))
 
 # purge expired posts
 #----------------------------------------------------------------------------------------
 posts <- checkExpirationDatesOf (posts)
-print (paste0 (Sys.time (), ';  (5) Expiration dates have been checked.'))
+print (paste0 (Sys.time (), '; rScritps: (1.5)  Expiration dates have been checked.'))
 
 # re-evaluate priority of posts
 #----------------------------------------------------------------------------------------
 posts <- reEvaluatePriorityOf (posts)
-print (paste0 (Sys.time (), ';  (6) Priorities have been re-evaluated.'))
+print (paste0 (Sys.time (), '; rScritps: (1.6)  Priorities have been re-evaluated.'))
 
 # generate new posts concerning regularly recurrent events
 #----------------------------------------------------------------------------------------
@@ -116,7 +118,7 @@ posts <- checkSummerSolstice            (posts) #  21st of June
 posts <- checkWinterSolstice            (posts) #  21st of December
 posts <- checkHalloween                 (posts) #  31st of October
 posts <- monthlyEngagementReminder      (posts) #  2nd week of each month
-print (paste0 (Sys.time (), ';  (7) Events have been checked.'))
+print (paste0 (Sys.time (), '; rScritps: (1.7)  Events have been checked.'))
 
 # generate new posts concerning leaf phenology
 #----------------------------------------------------------------------------------------
@@ -136,7 +138,7 @@ posts <- checkStorm          (posts) # Check for storm or rather a windy day.
 posts <- checkHourlyRainfall (posts) # Check for hourly rainfall above 3.0mm.
 # TR - checkDailyRainfall() relies on dendrometer, which needs re-installing 
 # posts <- checkDailyRainfall  (posts) # Check for daily rainfall above 20.0mm.
-print (paste0 (Sys.time (), ';  (8) Climatic conditions have been checked.'))
+print (paste0 (Sys.time (), '; rScritps: (1.8)  Climatic conditions have been checked.'))
 
 # generate new posts concerning the morphology of the tree
 #----------------------------------------------------------------------------------------
@@ -150,19 +152,19 @@ posts <- explainGypsyMothHerbivory (posts) # give background on gypsy moths betw
                                            # of May and end of August
 posts <- explainGallWasps          (posts) # give background about galls
 posts <- checkCommunityWildlife    (posts) # post about visitors from the wildlife camera  
-print (paste0 (Sys.time (), ';  (9) Community related messages have been checked.'))
+print (paste0 (Sys.time (), '; rScritps: (1.9)  Community related messages have been checked.'))
 
 # generate new posts concerning physiology
 #----------------------------------------------------------------------------------------
 #posts <- monthlyRadGrowthSummary (posts) # TR - Needs dendrometer data 
 #posts <- checkWoodGrowthUpdate   (posts) # TR - Needs dendrometer data
 posts <- checkWaxyCuticle        (posts)
-print (paste0 (Sys.time (), '; (10) Physiological conditions have been checked.'))
+print (paste0 (Sys.time (), '; rScritps: (1.10) Physiological conditions have been checked.'))
 
 # generate new posts concerning phenology
 #----------------------------------------------------------------------------------------
 posts <- checkLeafColourChange (posts) # Verify leaf colour change from phenocam
-print (paste0 (Sys.time (), '; (11) Phenological conditions have been checked.'))
+print (paste0 (Sys.time (), '; rScritps: (1.11) Phenological conditions have been checked.'))
 
 # generate interactive responses
 #----------------------------------------------------------------------------------------
@@ -170,7 +172,7 @@ IOStatus <- generateInteractiveResponses ()
 if (IOStatus != 0) {
   stop ('Error: Interactive responses were not generated properly!') 
 } else {
-  print (paste0 (Sys.time (), '; (12) Interactive responses were generated.'))
+  print (paste0 (Sys.time (), '; rScritps: (1.12) Interactive responses were generated.'))
 }
 
 # delete posts that have already been posted within the last two weeks
@@ -180,7 +182,7 @@ posts <- deletePostedPostsAndRemoveDuplicates (posts)
 # selection of post, figure and images for the current iterations
 #----------------------------------------------------------------------------------------
 post <- selectPost (posts)
-print (paste0 (Sys.time (), '; (13) A post has been selected.'))
+print (paste0 (Sys.time (), '; rScritps: (1.13) A post has been selected.'))
 
 # check whether there is a post
 #----------------------------------------------------------------------------------------
@@ -220,7 +222,7 @@ if (dim (post) [1] == 1) {
     # add post back to posts tibble, as it will not be posted right now
     #------------------------------------------------------------------------------------
     posts <- rbind (posts, post)
-    print (paste0 (Sys.time (), '; () Warning: The last post was less than four hours ago!'))
+    print (paste0 (Sys.time (), '; Warning: The last post was less than four hours ago!'))
     
     # write post to posts/ folder named after date and time when it should be scheduled 
     #------------------------------------------------------------------------------------

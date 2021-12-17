@@ -19,8 +19,8 @@ explainDimensions <- function (ptable, TEST = 0) {
   #--------------------------------------------------------------------------------------
   listOfVisitors <- list.files (path = sprintf ('%simages/wildlifeCam/',path), 
                                 pattern = '.jpg')  
-  if (file.exists ('memory.csv')) {
-    memory <- read_csv ('memory.csv', col_types = cols ())
+  if (file.exists (paste0 (path, 'code/memory.csv'))) {
+    memory <- read_csv (paste0 (path, 'code/memory.csv'), col_types = cols ())
   } else { # if there is no memory.csv file create one
     memory <- tibble (numberOfPreviousVisitors = length (listOfVisitors),
                       lastResponse = format (Sys.time (), '%Y-%m-%d %H:%M'),
