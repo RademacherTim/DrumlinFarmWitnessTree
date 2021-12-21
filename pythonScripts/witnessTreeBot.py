@@ -97,23 +97,23 @@ if os.path.exists (fileName):
 
   if local_now.astimezone (pytz.utc) > oneHourFromLastPost.astimezone (pytz.utc):
 
-    # Get graph for facebook
+    # get graph for facebook
     #------------------------------------------------------------------------------------
-    graph = facebook.GraphAPI(page_access_token)        
+    graph = facebook.GraphAPI (page_access_token)        
 
-    # The post is not accompanied by an image
+    # post is not accompanied by an image
     #------------------------------------------------------------------------------------
     if fFigure == "FALSE":
-      #api.update_status (message + hashtags)
-      #graph.put_object (facebook_page_id, "feed", message = message + hashtags)
+      api.update_status (message + hashtags)
+      graph.put_object (facebook_page_id, "feed", message = message + hashtags)
       print (fFigure)
 
-    # The post is accompanied by an image
+    # post is accompanied by an image
     #------------------------------------------------------------------------------------
     elif fFigure == "TRUE":
-      #api.update_with_media (filename = figureName, 
-      #     	               status = message + hashtags)
-      #graph.put_photo (image=open(figureName,'rb'), message = message + hashtags)
+      api.update_with_media (filename = figureName, 
+           	               status = message + hashtags)
+      graph.put_photo (image=open(figureName,'rb'), message = message + hashtags)
       print (fFigure)
 			
   else:
@@ -176,10 +176,10 @@ for i in questions:
           print ('Questions was already answered.')
         else: 
           response = random.sample (responses ['reply'] [5:len(responses)], 1) [0]  
-          #tweet = api.update_status (status = "@%s "% (handle) + response.decode ("utf-8"), 
-          #                            in_reply_to_status_id = tweet.id)
-          #tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
-          #responseCount = responseCount + 1
+          tweet = api.update_status (status = "@%s "% (handle) + response.decode ("utf-8"), 
+                                      in_reply_to_status_id = tweet.id)
+          tweetIDs.append (tweet.id) # add it to the replied to IDs after first reply.
+          responseCount = responseCount + 1
 		      
 print (str (now) + '; python: (2.4)  Responded to ' + str (responseCount) + ' questions.')
 
@@ -202,9 +202,9 @@ for tweet in tweets:
     handle = tweet.user.screen_name
     response = responses ['reply'] [0]
     figureName = './images/witnesstree_PhenoCamImage.jpg'
-    #tweet = api.update_with_media (filename = figureName, 
-    #                               status = "@%s "% handle + response.decode ("utf-8"), 
-    #                               in_reply_to_status_id = tweet.id)
+    tweet = api.update_with_media (filename = figureName, 
+                                   status = "@%s "% handle + response.decode ("utf-8"), 
+                                   in_reply_to_status_id = tweet.id)
     tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
     responseCount = responseCount + 1
 
