@@ -18,6 +18,7 @@ import os         # library to interact with operating system
 import random     # library to use random number generator
 import array      # library for array handling
 import pytz       # for timezone handling
+import math       # for nan handling
 from datetime import date, time, datetime, timedelta
 
 # credentials for twitter and facebook
@@ -60,7 +61,7 @@ localTwitter = pytz.timezone ("UTC")
 now = datetime.now ()
 local_now = local.localize (now, is_dst = None)
 fileName = path + "posts/%s.csv" % now.strftime ("%Y-%m-%d_%H")
-print (str (now) + '; python: (2.1)  Read: '+ fileName)
+print (str (now) + '; python: (2.1)  Looking for: '+ fileName)
 
 # read in timestamp, when we last replied to interactive tweets.
 #----------------------------------------------------------------------------------------
@@ -81,16 +82,21 @@ if os.path.exists (fileName):
   fFigure    = tmp ['fFigure']    [0]
   figureName = tmp ['figureName'] [0]
   message    = tmp ['message']    [0]
-  hashtags   = tmp ['hashtags']    [0]
+  hashtags   = tmp ['hashtags']   [0]
+  if math.isnan (hashtags):
+    post = message
+  else:
+    post = message + hashtags
   expires    = tmp ['expires']    [0]
   print (str (now) + '; python: (2.2)  Will post: '+ message)
 
   # Search for when this post was last posted
   #------------------------------------------------------------------------------------
-  lastMessage = api.search_tweets (q = message)
+  lastMessage = api.user_timeline (screen_name = 'awitnesstree', 
+                                   include_rts = 'false', 
+                                   count = 1)
   if len (lastMessage)-1 >= 0:
-    lastMessage = lastMessage [len (lastMessage) - 1]
-    lastPostTime = localTwitter.localize (lastMessage.created_at, is_dst = None)
+    lastPostTime = lastMessage [0].created_at
     oneHourFromLastPost = lastPostTime + timedelta (hours = 1)
   else: 
     oneHourFromLastPost = local_now - timedelta (hours = 1)
@@ -99,29 +105,30 @@ if os.path.exists (fileName):
 
     # get graph for facebook
     #------------------------------------------------------------------------------------
-    graph = facebook.GraphAPI (page_access_token)        
-
-    # post is not accompanied by an image
-    #------------------------------------------------------------------------------------
-    if fFigure == "FALSE":
-      api.update_status (message + hashtags)
-      graph.put_object (facebook_page_id, "feed", message = message + hashtags)
-      print (fFigure)
+    #graph = facebook.GraphAPI (page_access_token, version = '3.1')        
 
     # post is accompanied by an image
     #------------------------------------------------------------------------------------
-    elif fFigure == "TRUE":
-      api.update_with_media (filename = figureName, 
-           	               status = message + hashtags)
-      graph.put_photo (image=open(figureName,'rb'), message = message + hashtags)
-      print (fFigure)
-			
+    if fFigure:
+      file = api.media_upload (filename = figureName)
+      tweet = api.update_status (status = post, media_ids = [file.media_id])
+      #graph.put_photo (image = open (figureName, 'rb'), message = post)
+      
+    # post is not accompanied by an image
+    #------------------------------------------------------------------------------------
+    else:
+      tweet = api.update_status (status = post)
+      #graph.put_object (parent_object = facebook_page_id, 
+      #                  connection_name = "feed", 
+      #                  message = post)
+      
   else:
     print (str (now) + '; python: Error: Last post was less than 1 hours ago!')
 
 else:
   print (str (now) + '; python: Error: No file with a message!')
 
+#----------------------------------------------------------------------------------------
 # respond to various tweets
 #----------------------------------------------------------------------------------------
 
@@ -132,8 +139,8 @@ if os.path.exists (path + 'tmp/interactiveResponses.csv'):
   print (str (now) + '; python: (2.3)  Responses for interactive tweets read in.')
 else:
   print (str (now) + '; python: Error: No responses for interactive messages available!')
-
-# Create list of tweets along the lines of how are you
+  
+# create list of tweets along the lines of how are you
 #----------------------------------------------------------------------------------------
 questions = ['how are you',
              'how are you doing',
@@ -144,7 +151,6 @@ questions = ['how are you',
              'how do you do',
              'how\'s it going',
              'how are you doing']
-#print (t)
 
 # respond to tweets containing the above questions
 #----------------------------------------------------------------------------------------
@@ -158,80 +164,96 @@ for i in questions:
   # get list of all tweets since last having responded
   #-------------------------------------------------------------------------------------
   for tweet in tmpTweets:
-    local_dt = localTwitter.localize (tweet.created_at, is_dst = None)
+    local_dt = tweet.created_at
     questionTime = local_dt.astimezone (pytz.utc)
     if questionTime > lastResponseTime: tweets.append (tweet)	
   
   # loop over unanswered tweets
   #------------------------------------------------------------------------------------
-  for tweet in tweets:
-    handle = tweet.user.screen_name	
-    if tweet.user.screen_name != 'awitnesstree':
-      for previousResponse in previousResponses:
-        #print (previousResponse.text [0:len(handle)+1])
-        if "@%s" % handle == previousResponse.text [0:len(handle)+1]: 
-          tweetIDs.append (tweet.id)               	
+  if tweets:
+    for tweet in tweets:
+      handle = tweet.user.screen_name	
+      if tweet.user.screen_name != 'awitnesstree':
+        for previousResponse in previousResponses:
+          #print (previousResponse.text [0:len(handle)+1])
+          if "@%s" % handle == previousResponse.text [0:len(handle)+1]: 
+            tweetIDs.append (tweet.id)               	
 	
-        if tweet.id in tweetIDs or tweet.user.screen_name == 'awitnesstree':
-          print ('Questions was already answered.')
-        else: 
-          response = random.sample (responses ['reply'] [5:len(responses)], 1) [0]  
-          tweet = api.update_status (status = "@%s "% (handle) + response.decode ("utf-8"), 
-                                      in_reply_to_status_id = tweet.id)
-          tweetIDs.append (tweet.id) # add it to the replied to IDs after first reply.
-          responseCount = responseCount + 1
+          if tweet.id in tweetIDs or tweet.user.screen_name == 'awitnesstree':
+            print ('Questions was already answered.')
+          else: 
+            response = random.sample (responses ['reply'] [5:len(responses)], 1) [0]  
+            tweet = api.update_status (status = "@%s "% (handle) + response, 
+                                       in_reply_to_status_id = tweet.id)
+            tweetIDs.append (tweet.id) # add it to the replied to IDs after first reply.
+            responseCount = responseCount + 1
 		      
-print (str (now) + '; python: (2.4)  Responded to ' + str (responseCount) + ' questions.')
+print (str (now) + '; python: (2.4)  Responded to ' + str (responseCount) + 
+       ' questions (i.e., how are you?).')
 
 # look for selfie requests
 #----------------------------------------------------------------------------------------
 question = 'send me a selfie'
 tmpTweets = api.search_tweets (q = "@%s " % (user.screen_name) + question)
 tweets = []
+responseCount = 0
 for tweet in tmpTweets:
-  local_dt = localTwitter.localize (tweet.created_at, is_dst = None)
+  local_dt = tweet.created_at
   questionTime = local_dt.astimezone (pytz.utc)
   if questionTime > lastResponseTime: tweets.append (tweet)	
-    
-# respond to selfie tweets
+ 
+# prepare response only once, including uploading the figure
 #----------------------------------------------------------------------------------------
-for tweet in tweets:
-  if tweet.id in tweetIDs or tweet.user.screen_name == 'awitnesstree':
-    print ('Questions was already answered.')
-  else: 
-    handle = tweet.user.screen_name
-    response = responses ['reply'] [0]
-    figureName = './images/witnesstree_PhenoCamImage.jpg'
-    tweet = api.update_with_media (filename = figureName, 
-                                   status = "@%s "% handle + response.decode ("utf-8"), 
-                                   in_reply_to_status_id = tweet.id)
-    tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
-    responseCount = responseCount + 1
+if tweets:
+  response = responses ['reply'] [0]
+  figureName = './images/witnesstree_PhenoCamImageRecent.jpg'
+  file = api.media_upload (filename = figureName)
+   
+  # respond to selfie tweets
+  #--------------------------------------------------------------------------------------
+  for tweet in tweets:
+    if tweet.id in tweetIDs or tweet.user.screen_name == 'awitnesstree':
+      print ('Questions was already answered.')
+    else: 
+      handle = tweet.user.screen_name
+      tweet = api.update_status (status = "@%s "% handle + response, 
+                                 in_reply_to_status_id = tweet.id,
+                                 media_ids = [file.media_id])
+      tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply
+      responseCount = responseCount + 1
 
-print (str (now) + '; python: (2.5)  Responded to ' + str (responseCount) + ' questions including selfies.')
+# log entry
+#----------------------------------------------------------------------------------------
+print (str (now) + '; python: (2.5)  Responded to ' + str (responseCount) + 
+       ' questions including selfies.')
 
 # look for tweets containing "How old are you"
 #----------------------------------------------------------------------------------------
 question = 'How old are you'
 tmpTweets = api.search_tweets (q = "@%s " % (user.screen_name) + question)
 tweets = []
+responseCount = 0
 for tweet in tmpTweets:
   local_dt = localTwitter.localize (tweet.created_at, is_dst = None)
   questionTime = local_dt.astimezone (pytz.utc)
   if questionTime > lastResponseTime: tweets.append (tweet)	
     
-# respond to tweets containing "How old are you"
+# select response
 #----------------------------------------------------------------------------------------
-for tweet in tweets:
-  if tweet.id in tweetIDs or tweet.user.screen_name == 'awitnesstree':
-    print ('Questions was already answered.')
-  else: 
-    handle = tweet.user.screen_name
-    response = responses ['reply'] [1]
-    tweet = api.update_status (status = "@%s "% handle + response.decode ("utf-8"), 
-                               in_reply_to_status_id = tweet.id)
-    tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
-    responseCount = responseCount + 1
+if tweets:
+  response = responses ['reply'] [1]
+
+  # respond to tweets containing "How old are you"
+  #--------------------------------------------------------------------------------------
+  for tweet in tweets:
+    if tweet.id in tweetIDs or tweet.user.screen_name == 'awitnesstree':
+      print ('Questions was already answered.')
+    else: 
+      handle = tweet.user.screen_name
+      tweet = api.update_status (status = "@%s "% handle + response, 
+                                 in_reply_to_status_id = tweet.id)
+      tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
+      responseCount = responseCount + 1
 
 print (str (now) + '; python: (2.6)  Responded to ' + str (responseCount) + ' questions including age.')
 
@@ -240,6 +262,7 @@ print (str (now) + '; python: (2.6)  Responded to ' + str (responseCount) + ' qu
 question = 'What was coldest day'
 tmpTweets = api.search_tweets (q = "@%s " % (user.screen_name) + question)
 tweets = []
+responseCount = 0
 for tweet in tmpTweets:
   local_dt = localTwitter.localize (tweet.created_at, is_dst = None)
   questionTime = local_dt.astimezone (pytz.utc)
@@ -253,7 +276,7 @@ for tweet in tweets:
 	else: 
 		handle = tweet.user.screen_name
 		response = responses ['reply'] [2]
-		tweet = api.update_status (status = "@%s "% handle + response.decode ("utf-8"), 
+		tweet = api.update_status (status = "@%s "% handle + response, 
                                in_reply_to_status_id = tweet.id)
 		tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
 		responseCount = responseCount + 1
@@ -265,6 +288,7 @@ print (str (now) + '; python: (2.7)  Responded to ' + str (responseCount) + ' qu
 question = 'What was hottest day'
 tmpTweets = api.search_tweets (q = "@%s " % (user.screen_name) + question)
 tweets = []
+responseCount = 0
 for tweet in tmpTweets:
   local_dt = localTwitter.localize (tweet.created_at, is_dst = None)
   questionTime = local_dt.astimezone (pytz.utc)
@@ -278,7 +302,7 @@ for tweet in tweets:
 	else: 
 		handle = tweet.user.screen_name
 		response = responses ['reply'] [3]
-		tweet = api.update_status (status = "@%s "% handle + response.decode ("utf-8"), 
+		tweet = api.update_status (status = "@%s "% handle + response, 
                                in_reply_to_status_id = tweet.id)
 		tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
 		responseCount = responseCount + 1
@@ -290,6 +314,7 @@ print (str (now) + '; python: (2.8)  Responded to ' + str (responseCount) + ' qu
 question = 'if a tree falls in a forest, does it make a sound'
 tmpTweets = api.search_tweets (q = "@%s " % (user.screen_name) + question)
 tweets = []
+responseCount = 0
 for tweet in tmpTweets:
   local_dt = localTwitter.localize (tweet.created_at, is_dst = None)
   questionTime = local_dt.astimezone (pytz.utc)
@@ -303,7 +328,7 @@ for tweet in tweets:
 	else: 
 		handle = tweet.user.screen_name
 		response = responses ['reply'] [4]
-		tweet = api.update_status (status = "@%s "% handle + response.decode ("utf-8"), 
+		tweet = api.update_status (status = "@%s "% handle + response, 
                                in_reply_to_status_id = tweet.id)
 		tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
 		responseCount = responseCount + 1

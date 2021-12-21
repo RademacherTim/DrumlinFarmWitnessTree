@@ -14,18 +14,18 @@
 #----------------------------------------------------------------------------------------
 selectPost <- function (ptable) { # tibble of posts with, inter alia, priorities 
   
-  # Delete all messages that are empty or saying "NEEDS MESSAGE"
+  # delete all messages that are empty or saying "NEEDS MESSAGE"
   #--------------------------------------------------------------------------------------
   ptable <- ptable [ptable [['message']] != 'NEEDS MESSAGE', ]
   ptable <- ptable [ptable [['message']] != '', ]
   
-  # Arrange messages by descending priority
+  # arrange messages by descending priority
   #--------------------------------------------------------------------------------------
   mByPriority <- arrange (.data = ptable, desc (priority))
   
-  # Subset only highest priority
+  # subset only highest priority
   #--------------------------------------------------------------------------------------
-  highestPriority <- mByPriority [mByPriority[['priority']] == mByPriority [['priority']] [1] &
+  highestPriority <- mByPriority [mByPriority [['priority']] == mByPriority [['priority']] [1] &
                                     !is.na (mByPriority [['priority']]), ]
   
   # Check whether there is more than one post of highest priority
@@ -36,11 +36,11 @@ selectPost <- function (ptable) { # tibble of posts with, inter alia, priorities
     post <- highestPriority
   }
   
-  # Delete temporary variables
+  # delete temporary variables
   #--------------------------------------------------------------------------------------
   rm (mByPriority, highestPriority)
   
-  # Return the selected message
+  # return the selected message
   #--------------------------------------------------------------------------------------
   return (post)
 }

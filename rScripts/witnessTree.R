@@ -20,9 +20,11 @@
 
 # To-do list:
 #----------------------------------------------------------------------------------------
-# - Improve the weekly check-list
-# - Install dendrometer and sapflow sensor
-# - Reintegrate dendrometer and sapflow sensor into messaging
+# TR - memory [['autumnForsts]] increases every twenty minutes rather than once a day
+# TR - Improve the weekly check-list
+# TR - Pass facebook review and obtain pages access token to resume posting to facebook page
+# TR - Install dendrometer and sapflow sensor
+# TR - Reintegrate dendrometer and sapflow sensor into messaging
 #----------------------------------------------------------------------------------------
 
 # get the absolute path to the directory including images and data 
@@ -192,10 +194,11 @@ if (dim (post) [1] == 1) {
   
   # check whether the bot has already posted four messages last week
   #--------------------------------------------------------------------------------------
-  pastPostDates <- as.POSIXct (list.files (sprintf ('%s/posts/', path), pattern = '.csv'),
+  pastPostDates <- as.POSIXct (list.files (sprintf ('%s/posts/', path), 
+                                           pattern = '.csv'),
                                format = "%Y-%m-%d_%H")
-  numberOfPostsLastWeek <- length (pastPostDates [pastPostDates > Sys.Date () - 7         & 
-                                                    !is.na  (pastPostDates)                 &
+  numberOfPostsLastWeek <- length (pastPostDates [pastPostDates > Sys.Date () - 7 & 
+                                                    !is.na  (pastPostDates)       &
                                                     !is.nan (pastPostDates)])
   lastPostDateTime <- tail (pastPostDates [!is.na (pastPostDates)], n = 1)
   
