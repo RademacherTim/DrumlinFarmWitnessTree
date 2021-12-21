@@ -356,9 +356,9 @@ checkWinterSolstice <- function (ptable, TEST = 0) {
   index <- which (solarDates [['year']] == year (Sys.time ()))
   solsticeDate <- solarDates [['winterSolstice']] [index] # Extract this years date 
   attributes (solsticeDate)$tzone <- treeTimeZone          # Change timezone
-  if (       Sys.time ()  >=        solsticeDate  & 
-             month (Sys.Date ()) == month (solsticeDate) & 
-             day   (Sys.Date ()) == day   (solsticeDate) | TEST == 1) { 
+  if (Sys.time ()         >=        solsticeDate  & 
+      month (Sys.Date ()) == month (solsticeDate) & 
+      day   (Sys.Date ()) == day   (solsticeDate) | TEST == 1) { 
     postDetails <- getPostDetails ('checkWinterSolstice')
     ptable    <- add_row (ptable, 
                           priority    = postDetails [["Priority"]],
@@ -368,6 +368,9 @@ checkWinterSolstice <- function (ptable, TEST = 0) {
                           hashtags    = postDetails [["Hashtags"]], 
                           expires     = expiresIn (0))   
   } 
+  
+  # return post details
+  #--------------------------------------------------------------------------------------
   return (ptable)
 }
 

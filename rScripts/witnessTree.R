@@ -4,7 +4,7 @@
 #
 # Version: 2.0.1
 #
-# Home repository: https://github.com/TTRademacher/witnessTreeCode
+# Home repository: https://github.com/TTRademacher/HarvardForestWitnessTreeCode
 #
 # Project lead: Tim Rademacher (rademacher.tim@gmail.com)
 #
@@ -13,16 +13,14 @@
 #                   Shawna Greyeyes, Bijan Seyednasrollah for their invaluable 
 #                   contributions.
 #
-# Last update: 2021-12-08
+# Last update: 2021-12-21
 #
 #----------------------------------------------------------------------------------------
 
 
 # To-do list:
 #----------------------------------------------------------------------------------------
-# - Solve issue pertaining to memory file
 # - Improve the weekly check-list
-# - Restart the account  
 # - Install dendrometer and sapflow sensor
 # - Reintegrate dendrometer and sapflow sensor into messaging
 #----------------------------------------------------------------------------------------
@@ -248,9 +246,9 @@ if (dim (posts) [1] > 0) {
 
 # write to log files
 #----------------------------------------------------------------------------------------
-write_csv (x         = as.data.frame (sprintf ('%s', 
+write_csv (x         = as.data.frame (sprintf ('%s; R code ran smoothly.', 
                                                format (Sys.time (), "%Y-%m-%d %H:%M"))),
-           file      = sprintf ('%slogs/logFileWitnessTreeRCode.csv', path),
+           file      = sprintf ('%slogs/logFileWitnessTreeRCode.txt', path),
            col_names = FALSE,
            append    = TRUE)
 

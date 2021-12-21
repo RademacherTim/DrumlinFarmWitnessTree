@@ -52,13 +52,9 @@ checkCommunityWildlife <- function (ptable, TEST = 0) {
   listOfVisitors <- list.files (path = sprintf ('%simages/wildlifeCam/',path), 
                                 pattern = '.jpg')  
   if (file.exists (paste0 (path, 'code/memory.csv'))) {
-    memory <- read_csv (file = paste0 (path, 'code/memory.csv'), 
-                        col_types = cols ())
+    memory <- read_csv (file = paste0 (path, 'code/memory.csv'), col_types = cols ())
   } else {
-    memory <- tibble (numberOfPreviousVisitors = length (listOfVisitors),
-                      lastResponse = format (Sys.time (), '%Y-%m-%d %H:%M'),
-                      dimensionsPosted = FALSE, 
-                      growingSeason = TRUE)
+    stop (paste0 (Sys.time (), '; checkCommunity.R; Error: There is not memory file'))
   }
   
   
@@ -101,10 +97,9 @@ checkCommunityWildlife <- function (ptable, TEST = 0) {
                           hashtags    = postDetails [["Hashtags"]], 
                           expires     = expiresIn (delay = delay))
       
-      # Increase the wildlife counter in the memory
+      # increase the wildlife counter in the memory
       #----------------------------------------------------------------------------------
       memory [['numberOfPreviousVisitors']] <- memory [['numberOfPreviousVisitors']] + 1
-      memory [['lastResponse']] <- format (memory [['lastResponse']], '%Y-%m-%d %H:%M')
       write_csv (memory, paste0 (path,'code/memory.csv'))
     }
   }

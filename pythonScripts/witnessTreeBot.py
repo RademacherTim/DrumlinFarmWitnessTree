@@ -66,11 +66,7 @@ print (str (now) + '; python: (2.1)  Read: '+ fileName)
 #----------------------------------------------------------------------------------------
 if os.path.exists (path + 'code/memory.csv'):
   tmpMem = pandas.read_csv (path + 'code/memory.csv')
-  tmpTime = tmpMem ['lastResponse']
-  tmpTime = tmpTime [0]
-  tmpTime = datetime.strptime (tmpTime, '%Y-%m-%dT%H:%M:%SZ')
-  local_dt = local.localize (tmpTime, is_dst = None)
-  lastResponseTime = local_dt.astimezone (pytz.utc)
+  lastResponseTime = pandas.to_datetime (tmpMem ['lastResponse'] [0])
 else:
   print (str (now) + '; python: Error: Could not find a last response time.')
 
@@ -205,7 +201,7 @@ for tweet in tweets:
   else: 
     handle = tweet.user.screen_name
     response = responses ['reply'] [0]
-    figureName = './tmp/witnesstree_PhenoCamImage.jpg'
+    figureName = './images/witnesstree_PhenoCamImage.jpg'
     #tweet = api.update_with_media (filename = figureName, 
     #                               status = "@%s "% handle + response.decode ("utf-8"), 
     #                               in_reply_to_status_id = tweet.id)
@@ -318,10 +314,9 @@ print (str (now) + '; python: (2.9)  Responded to ' + str (responseCount) + ' qu
 # a question to avoid trying to re-post
 #----------------------------------------------------------------------------------------
 local_dt = local.localize (datetime.now (), is_dst = None)
-tmpMem ['lastResponse'] = datetime.strftime (local_dt, '%Y-%m-%d %H:%M')
-tmpMem ['lastResponse'] = '\"' + tmpMem ['lastResponse'] + '\"'
-export_csv = tmp.to_csv (path + 'code/memory.csv', index = None, header = True, 
-                         quoting = csv.QUOTE_NONE)
+tmpMem ['lastResponse'] = datetime.strftime (local_dt, '%Y-%m-%d %H:%M %Z')
+export_csv = tmpMem.to_csv (path + 'code/memory.csv', index = None, header = True, 
+                            quoting = csv.QUOTE_NONE)
 print (str (now) + '; python: (2.10) Updated lastResponse timestamp.')
 
 # To delete a status use:'''

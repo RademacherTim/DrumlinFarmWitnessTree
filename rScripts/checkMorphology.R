@@ -22,10 +22,7 @@ explainDimensions <- function (ptable, TEST = 0) {
   if (file.exists (paste0 (path, 'code/memory.csv'))) {
     memory <- read_csv (paste0 (path, 'code/memory.csv'), col_types = cols ())
   } else { # if there is no memory.csv file create one
-    memory <- tibble (numberOfPreviousVisitors = length (listOfVisitors),
-                      lastResponse = format (Sys.time (), '%Y-%m-%d %H:%M'),
-                      dimensionsPosted = FALSE,
-                      growingSeason = TRUE)
+    stop (paste0 (Sys.time (), '; checkMorphology.R; Error: There is not memory file'))
   }
   
   # check whether it is the 20th
@@ -55,15 +52,13 @@ explainDimensions <- function (ptable, TEST = 0) {
     # update memory 
     #------------------------------------------------------------------------------------
     memory [['dimensionsPosted']] <- TRUE
-    memory [['lastResponse']] <- format (memory [['lastResponse']], '%Y-%m-%d %H:%M')
     write_csv (memory, paste0 (path,'code/memory.csv'))
     
-    # Reset dimensionsPosted boolean on the 21st of the month
+    # reset dimensionsPosted boolean on the 21st of the month
     #--------------------------------------------------------------------------------------
   } else if (substring (Sys.time (), 9, 13) == "21 12" & 
              memory [['dimensionsPosted']] == TRUE) {
     memory [['dimensionsPosted']] <- FALSE
-    memory [['lastResponse']] <- format (memory [['lastResponse']], '%Y-%m-%d %H:%M')
     write_csv (memory, paste0 (path,'code/memory.csv'))
   } 
   

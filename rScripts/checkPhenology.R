@@ -21,12 +21,9 @@ checkLeafColourChange <- function (ptable, TEST = 0) {
     # check season in memory
     #------------------------------------------------------------------------------------
     if (file.exists ('memory.csv')) {
-      memory <- read_csv ('memory.csv', col_types = cols ())
+      memory <- read_csv (file = paste0 (path, 'code/memory.csv'), col_types = cols ())
     } else {
-      memory <- tibble (numberOfPreviousVisitors = length (listOfVisitors),
-                        lastResponse = format (Sys.time (), '%Y-%m-%d %H:%M'),
-                        dimensionsPosted = FALSE,
-                        growingSeason = TRUE)
+      stop (paste0 (Sys.time (), '; checkPhenology.R; Error: There is not memory file.'))
     }
     
     # set site threshold (n.b. this needs to vary by sites)
@@ -58,7 +55,6 @@ checkLeafColourChange <- function (ptable, TEST = 0) {
       # update growingSeason boolean to start the season
       #----------------------------------------------------------------------------------
       memory [['growingSeason']] <- TRUE
-      memory [['lastResponse']] <- format (memory [['lastResponse']], '%Y-%m-%d %H:%M')
       write_csv (memory, paste0 (path, 'code/memory.csv'))
       
     # is it the growing season and gcc indicates leaf shedding has occurred?
@@ -79,7 +75,6 @@ checkLeafColourChange <- function (ptable, TEST = 0) {
       # update growingSeason boolean to end the season
       #-----------------------------------------------------------------------------------
       memory [['growingSeason']] <- FALSE
-      memory [['lastResponse']] <- format (memory [['lastResponse']], '%Y-%m-%d %H:%M')
       write_csv (memory, paste0 (path, 'code/memory.csv'))
       
     }

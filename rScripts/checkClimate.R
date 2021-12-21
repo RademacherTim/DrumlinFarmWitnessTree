@@ -19,7 +19,7 @@
 #  13)  Hottest year experienced                variable
 #  14)  Coldest year experienced                variable
 #  15)  Latest frost event                      variable
-#  16)  Lastest snow                            variable 
+#  16)  Latest snow                             variable 
 #  17)  Monthly summary of climate              beginning of following month
 #  18)  Annual summary of climate               beginning of following year
 #  19)  Growing season summary of climate       at the beginning of November?
@@ -28,7 +28,7 @@
 #  xx)  Drought                                 variable TR - Not made yet
 #  xx)  Heavy rain                              variable TR - Not made yet
 #  xx)  Still standing after heavy wind/storm   variable TR - Not made yet "I am still standing"
-#  XX)  Maple sirup season                      variable TR - Not made yet "My bro's juices are flowing"
+#  XX)  Maple syrup season                      variable TR - Not made yet "My bro's juices are flowing"
 #----------------------------------------------------------------------------------------
 
 # to-do list:
