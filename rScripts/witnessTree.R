@@ -19,9 +19,10 @@
 
 # To-do list:
 #----------------------------------------------------------------------------------------
-# TR - memory [['autumnForsts]] increases every twenty minutes rather than once a day
 # TR - Improve the weekly check-list
 # TR - Pass facebook review and obtain pages access token to resume posting to facebook page
+# TR - Correct problems with weekly aggregations of climate data (airt, prec, snow). General decision to be taken of whether to start numbering in the beginning or the end
+# TR - Add messges based on the snow pillow data from Harvard Forest
 # TR - Install dendrometer and sapflow sensor
 # TR - Reintegrate dendrometer and sapflow sensor into messaging
 #----------------------------------------------------------------------------------------
