@@ -68,8 +68,9 @@ print (str (now) + '; python: (2.1)  Looking for: '+ fileName)
 if os.path.exists (path + 'code/memory.csv'):
   tmpMem = pandas.read_csv (path + 'code/memory.csv')
   lastResponseTime = pandas.to_datetime (tmpMem ['lastResponse'] [0])
+  print (str (now) + '; python: (2.2)  Read last response time from memory.')
 else:
-  print (str (now) + '; python: Error: Could not find a last response time.')
+  print (str (now) + '; python: (2.2)  Error: Could not find a last response time.')
 
 # read post, if it exists 
 #----------------------------------------------------------------------------------------
@@ -88,7 +89,7 @@ if os.path.exists (fileName):
   else:
     post = message + hashtags
   expires    = tmp ['expires']    [0]
-  print (str (now) + '; python: (2.2)  Will post: '+ message)
+  print (str (now) + '; python: (2.3)  Will post: '+ message)
 
   # Search for when this post was last posted
   #------------------------------------------------------------------------------------
@@ -123,10 +124,10 @@ if os.path.exists (fileName):
       #                  message = post)
       
   else:
-    print (str (now) + '; python: Error: Last post was less than 1 hours ago!')
+    print (str (now) + '; python: (2.3)  Error: Last post was less than 1 hours ago!')
 
 else:
-  print (str (now) + '; python: Error: No file with a message!')
+  print (str (now) + '; python: (2.3)  Error: No file with a message!')
 
 #----------------------------------------------------------------------------------------
 # respond to various tweets
@@ -136,9 +137,9 @@ else:
 #----------------------------------------------------------------------------------------
 if os.path.exists (path + 'tmp/interactiveResponses.csv'):
   responses = pandas.read_csv (path + 'tmp/interactiveResponses.csv')
-  print (str (now) + '; python: (2.3)  Responses for interactive tweets read in.')
+  print (str (now) + '; python: (2.4)  Responses for interactive tweets read in.')
 else:
-  print (str (now) + '; python: Error: No responses for interactive messages available!')
+  print (str (now) + '; python: (2.4)  Error: No responses for interactive messages available!')
   
 # create list of tweets along the lines of how are you
 #----------------------------------------------------------------------------------------
@@ -182,13 +183,13 @@ for i in questions:
           if tweet.id in tweetIDs or tweet.user.screen_name == 'awitnesstree':
             print ('Questions was already answered.')
           else: 
-            response = random.sample (responses ['reply'] [5:len(responses)], 1) [0]  
+            response = random.sample (list (responses ['reply'] [5:len(responses)]), 1) [0]  
             tweet = api.update_status (status = "@%s "% (handle) + response, 
                                        in_reply_to_status_id = tweet.id)
             tweetIDs.append (tweet.id) # add it to the replied to IDs after first reply.
             responseCount = responseCount + 1
 		      
-print (str (now) + '; python: (2.4)  Responded to ' + str (responseCount) + 
+print (str (now) + '; python: (2.5)  Responded to ' + str (responseCount) + 
        ' questions (i.e., how are you?).')
 
 # look for selfie requests
@@ -224,7 +225,7 @@ if tweets:
 
 # log entry
 #----------------------------------------------------------------------------------------
-print (str (now) + '; python: (2.5)  Responded to ' + str (responseCount) + 
+print (str (now) + '; python: (2.6)  Responded to ' + str (responseCount) + 
        ' questions including selfies.')
 
 # look for tweets containing "How old are you"
@@ -255,7 +256,7 @@ if tweets:
       tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
       responseCount = responseCount + 1
 
-print (str (now) + '; python: (2.6)  Responded to ' + str (responseCount) + ' questions including age.')
+print (str (now) + '; python: (2.7)  Responded to ' + str (responseCount) + ' questions including age.')
 
 # look for tweets containing "What was coldest day"
 #------------------------------------------------------------------------------
@@ -281,7 +282,7 @@ for tweet in tweets:
 		tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
 		responseCount = responseCount + 1
 		
-print (str (now) + '; python: (2.7)  Responded to ' + str (responseCount) + ' questions including coldest day.')
+print (str (now) + '; python: (2.8)  Responded to ' + str (responseCount) + ' questions including coldest day.')
 
 # look for tweets containing "What was hottest day"
 #------------------------------------------------------------------------------
@@ -307,7 +308,7 @@ for tweet in tweets:
 		tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
 		responseCount = responseCount + 1
 		
-print (str (now) + '; python: (2.8)  Responded to ' + str (responseCount) + ' questions including hottest day.')
+print (str (now) + '; python: (2.9)  Responded to ' + str (responseCount) + ' questions including hottest day.')
 
 # look for tweets containing "if a tree falls in the woods"
 #------------------------------------------------------------------------------
@@ -333,7 +334,7 @@ for tweet in tweets:
 		tweetIDs.append (tweet.id) # Add it to the replied to IDs after first reply.
 		responseCount = responseCount + 1
 		
-print (str (now) + '; python: (2.9)  Responded to ' + str (responseCount) + ' questions including "if a tree falls...".')
+print (str (now) + '; python: (2.10) Responded to ' + str (responseCount) + ' questions including "if a tree falls...".')
 
 # Update the memory.csv file to contain the timestamp, when we last replied to 
 # a question to avoid trying to re-post
@@ -342,7 +343,7 @@ local_dt = local.localize (datetime.now (), is_dst = None)
 tmpMem ['lastResponse'] = datetime.strftime (local_dt, '%Y-%m-%d %H:%M %Z')
 export_csv = tmpMem.to_csv (path + 'code/memory.csv', index = None, header = True, 
                             quoting = csv.QUOTE_NONE)
-print (str (now) + '; python: (2.10) Updated lastResponse timestamp.')
+print (str (now) + '; python: (2.11) Updated lastResponse timestamp.')
 
 # To delete a status use:'''
 #----------------------------------------------------------------------------------------

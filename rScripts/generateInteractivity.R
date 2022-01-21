@@ -56,14 +56,14 @@ generateInteractiveResponses <- function (TEST = 0) {
     responses <- add_row (responses, season = season, topic = 'temperature', 
                           reply = postDetails [['MessageText']])
     
-    # get responses based on precip
+    # get responses based on precipitation
     #------------------------------------------------------------------------------------
     if (round (precip) > round (meanPrecip)) { # wet
       postDetails <- getPostDetails ('generateInteractivity - growing season - wet')
       growth <- calcRadialGrowth (pdm_calibration_path = dataPath, temporalRes = 'annual')
       postDetails [['MessageText']] <- sprintf (postDetails [['MessageText']], round (dbh * 100.0 + bark + growth / 10, 2))
     } else if (round (precip) == round (meanPrecip)) { # average
-      postDetails <- getPostDetails ('generateInteractivity - growing season - average')
+      postDetails <- getPostDetails ('generateInteractivity - growing season - average precipitation')
     } else if (round (precip) < round (meanPrecip)) { # dry
       postDetails <- getPostDetails ('generateInteractivity - growing season - dry')
     }
@@ -75,6 +75,9 @@ generateInteractiveResponses <- function (TEST = 0) {
     # set season to growing season
     #------------------------------------------------------------------------------------
     season <- 'off-season'
+    
+    # get responses based on temperature
+    #------------------------------------------------------------------------------------
     if (round (airTemp) > round (meanAirTemp)) { # hot
       postDetails <- getPostDetails ('generateInteractivity - off season - hot')
     } else if (round (airTemp) == round (meanAirTemp)) { # average
@@ -85,6 +88,18 @@ generateInteractiveResponses <- function (TEST = 0) {
     postDetails [['MessageText']] <- sprintf (postDetails [['MessageText']], round (airTemp, 1),
                                               round (9.0 / 5.0 * (airTemp) + 32, 1))
     responses <- add_row (responses, season = season, topic = 'temperature', 
+                          reply = postDetails [['MessageText']])
+    
+    # get responses based on precipitation
+    #------------------------------------------------------------------------------------
+    if (round (precip) > round (meanPrecip)) { # wet
+      postDetails <- getPostDetails ('generateInteractivity - off season - wet')
+    } else if (round (precip) == round (meanPrecip)) { # average
+      postDetails <- getPostDetails ('generateInteractivity - off season - average precipitation')
+    } else if (round (precip) < round (meanPrecip)) { # dry
+      postDetails <- getPostDetails ('generateInteractivity - off season - dry')
+    }
+    responses <- add_row (responses, season = season, topic = 'rainfall', 
                           reply = postDetails [['MessageText']])
   }
   
