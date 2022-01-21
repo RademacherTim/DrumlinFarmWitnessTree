@@ -940,7 +940,7 @@ checkFrost <- function (ptable, TEST = 0) {
   
   # was there a frost today (calendar day)?
   #--------------------------------------------------------------------------------------
-  if (min (airt [['airt']] [airt [['day']] == Sys.Date ()], na.rm = TRUE) < 0.0) {
+  if (min (airt [["airt"]] [airt [["day"]] == Sys.Date ()], na.rm = TRUE) < 0.0) {
   
     # by default there is no frost-related message
     #------------------------------------------------------------------------------------
@@ -948,33 +948,36 @@ checkFrost <- function (ptable, TEST = 0) {
     
     # was this the first frost of the autumn (after July)
     #------------------------------------------------------------------------------------
-    memory <- read_csv (paste0 (path, 'code/memory.csv'), col_types = cols ())
-    if ((substring (Sys.Date (), 6, 10) >= '07-31' & memory [['autumnFrosts']] < 2) | 
+    memory <- read_csv (paste0 (path, "code/memory.csv"), col_types = cols ())
+    if ((substring (Sys.Date (), 6, 10) >= "07-31" & memory [["autumnFrosts"]] < 2) | 
         TEST == 1) {
-      postDetails <- getPostDetails ('checkFrost - first')
+      postDetails <- getPostDetails ("checkFrost - first")
       FROST <- TRUE
-    } else if (substring (Sys.Date (), 6, 10) >= '07-31') {
-      memory [['autumnFrosts']] <- memory [['autumnFrosts']] + 1
-      write_csv (memory, file = paste0 (path, 'code/memory.csv'))
+    } else if (substring (Sys.time (), 6, 10) >= "07-31" &
+               # assure that this only adds once per day to the frost count
+               substring (Sys.time (), 12, 16) >= "23:40") { 
+      memory [["autumnFrosts"]] <- memory [["autumnFrosts"]] + 1
+      write_csv (memory, file = paste0 (path, "code/memory.csv"))
     }
     
     # reset the autumnal frost counter on the 1st of January each year 
     #------------------------------------------------------------------------------------
     if (lubridate::month (Sys.Date ()) == 1 & lubridate::day (Sys.Date ()) == 1) {
-      memory [['autumnFrost']] <- 0
+      memory [["autumnFrost"]] <- 0
+      write_csv (memory, file = paste0 (path, "code/memory.csv"))
     } 
     
     # check for late frosts (after April and with at least three preceding frost-free days)
     #------------------------------------------------------------------------------------
-    if ((substring (Sys.Date (), 6, 10) >= '05-01' & # after April
-         substring (Sys.Date (), 6, 10) <= '08-01' & # before August
+    if ((substring (Sys.Date (), 6, 10) >= "05-01" & # after April
+         substring (Sys.Date (), 6, 10) <= "08-01" & # before August
          # below checks whether there was no frost in preceding three days
-         sum (airt [['airt']] [airt [['day']] >= format (Sys.Date () - 3, '%Y-%m-%d') & 
-                               airt [['day']] <  format (Sys.Date (),     '%Y-%m-%d') & 
-                               !is.na  (airt [['airt']])                              &
-                               !is.nan (airt [['airt']])] <= 0.0, na.rm = T) < 1) | 
+         sum (airt [["airt"]] [airt [["day"]] >= format (Sys.Date () - 3, "%Y-%m-%d") & 
+                               airt [["day"]] <  format (Sys.Date (),     "%Y-%m-%d") & 
+                               !is.na  (airt [["airt"]])                              &
+                               !is.nan (airt [["airt"]])] <= 0.0, na.rm = T) < 1) | 
         TEST == 2) {                                        # or we are testing
-      postDetails <- getPostDetails ('checkFrost - late')
+      postDetails <- getPostDetails ("checkFrost - late")
       FROST <- TRUE
     }
     
@@ -987,7 +990,7 @@ checkFrost <- function (ptable, TEST = 0) {
       NOFROST <- TRUE
       while (NOFROST) { # go back in time
         # select only temperatures during the day prior to the last checked day
-        temps <- airt [['airt']] [airt [['day']] >= format (Sys.Date () - (frostFreeDays), '%Y-%m-%d')]
+        temps <- airt [["airt"]] [airt [["day"]] >= format (Sys.Date () - (frostFreeDays), '%Y-%m-%d')]
         if (sum (temps < 0.0, na.rm = T) > 0.0) {
           NOFROST = FALSE
         } else {
@@ -997,14 +1000,14 @@ checkFrost <- function (ptable, TEST = 0) {
       
       # compose post details
       #----------------------------------------------------------------------------------
-      message   <- sprintf (postDetails [['MessageText']],  frostFreeDays) 
-      delay     <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7))
+      message   <- sprintf (postDetails [["MessageText"]],  frostFreeDays) 
+      delay     <- as.numeric (substring (postDetails [["ExpirationDate"]], 7 ,7))
       expirDate <- sprintf ("%s 23:59:59 %s", 
-                            format (Sys.Date () + delay, format = '%Y-%m-%d'), 
+                            format (Sys.Date () + delay, format = "%Y-%m-%d"), 
                             treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone)
       ptable    <- add_row (ptable, 
                             priority    = postDetails [["Priority"]], 
-                            fFigure     = postDetails [['fFigure']],
+                            fFigure     = postDetails [["fFigure"]],
                             figureName  = postDetails [["FigureName"]], 
                             message     = message, 
                             hashtags    = postDetails [["Hashtags"]], 
