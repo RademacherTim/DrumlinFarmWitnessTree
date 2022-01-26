@@ -3,6 +3,13 @@
 # as meteorological data from the specific met station. For example, we download 
 # meteorological data from the Fisher meteorological station for the the Witness Tree at 
 # Harvard Forest.
+# 
+# Weather datais documented here: 
+# https://harvardforest1.fas.harvard.edu/exist/apps/datasets/showData.html?id=HF001
+#
+# Snow pillow data is documented here:
+# https://harvardforest1.fas.harvard.edu/exist/apps/datasets/showData.html?id=HF155
+# 
 #---------------------------------------------------------------------------------------
 
 # get arguments from command line (i.e., absolute path to working directory)
@@ -20,11 +27,11 @@ if (length (args) == 0) {
 
 # load module specific dependencies
 #----------------------------------------------------------------------------------------
-if (!existsFunction ('esat'))      suppressPackageStartupMessages (library ('plantecophys')) # for calculation of vapour pressure deficit
-if (!existsFunction ('as_date'))   suppressPackageStartupMessages (library ('lubridate'))
-if (!existsFunction ('cols'))      suppressPackageStartupMessages (library ('readr'))
-if (!existsFunction ('tibble'))    suppressPackageStartupMessages (library ('tibble'))
-if (!existsFunction ('summarise')) suppressPackageStartupMessages (library ('dplyr'))
+if (!existsFunction ("esat"))      suppressPackageStartupMessages (library ("plantecophys")) # for calculation of vapour pressure deficit
+if (!existsFunction ("as_date"))   suppressPackageStartupMessages (library ("lubridate"))
+if (!existsFunction ("cols"))      suppressPackageStartupMessages (library ("readr"))
+if (!existsFunction ("tibble"))    suppressPackageStartupMessages (library ("tibble"))
+if (!existsFunction ("summarise")) suppressPackageStartupMessages (library ("dplyr"))
 
 # read climate data from the appropriate weather station
 #----------------------------------------------------------------------------------------
@@ -75,33 +82,33 @@ gust <- tibble (TIMESTAMP = dates2, gust = c (met_HF_gap$gspd, met_HF_old$gspd, 
 rehu <- tibble (TIMESTAMP = dates2, relativeHumidity = c (met_HF_gap$rh, met_HF_old$rh, met_HF_current$rh))
 snow <- tibble (TIMESTAMP = c (snow_HF_past$datetime, snow_HF_current$datetime), 
                 snow = c (snow_HF_past$swe, snow_HF_current$swe))
-  
+
 # add variable for different aggregation periods to airt (i.e. day, week, month, year)
 #----------------------------------------------------------------------------------------
-airt <- airt [-1, ]
+airt <- airt [-1, ] # delete first row, which was pre-1964
 airt <- add_column (airt, day   = format (airt [['TIMESTAMP']], '%Y-%m-%d'))
-airt <- add_column (airt, week  = floor ((airt [['TIMESTAMP']] -
-                                            (min (airt [['TIMESTAMP']], na.rm = T) -
-                                               3 * 60.0 * 60.0 * 24.0)) /
-                                           dweeks (1)))
+# the ISO 8601 week started two days before the data, therefore we need the two day 
+# offset (2 * 60.0 * 60.0 * 24.0)
+airt <- add_column (airt, 
+                    week  = floor ((airt [['TIMESTAMP']] - 
+                                    (min (airt [['TIMESTAMP']], na.rm = T) -
+                                    2 * 60.0 * 60.0 * 24.0)) / dweeks (1))) 
 airt <- add_column (airt, month = floor_date (airt [['TIMESTAMP']], 'month'))
 airt <- add_column (airt, year  = floor_date (airt [['TIMESTAMP']], 'year'))
 
 # create mean airt over varying aggregation periods (i.e. day, week, month, year)
 #----------------------------------------------------------------------------------------
 dailyAirt    <- airt %>% group_by (day) %>% 
-  dplyr::summarise (airt = mean (airt, na.rm = T))
+  dplyr::summarise (airt = mean (airt, na.rm = T)) %>% filter (!is.na (day))
 dailyMaxAirt <- suppressWarnings (
-  airt %>% group_by (day) %>%
-    dplyr::summarise (airt = max  (airt, na.rm = T)))
-dailyAirt    <- dailyAirt [!is.na (dailyAirt [['day']]),]
-dailyMaxAirt <- dailyMaxAirt [!is.na (dailyMaxAirt [['day']]),]
-weeklyAirt   <- airt %>% group_by (week) %>% dplyr::summarise (airt = mean (airt, na.rm = T))
-weeklyAirt   <- weeklyAirt [!is.na (weeklyAirt [['week']]), ]
-monthlyAirt  <- airt %>% group_by (month) %>% dplyr::summarise (airt = mean (airt, na.rm = T))
-monthlyAirt  <- monthlyAirt [!is.na (monthlyAirt [['month']]), ]
-yearlyAirt   <- airt %>% group_by (year) %>% dplyr::summarise (airt = mean (airt, na.rm = T))
-yearlyAirt   <- yearlyAirt [!is.na (yearlyAirt [['year']]), ]
+  airt %>% group_by (day) %>% dplyr::summarise (airt = max  (airt, na.rm = T))) %>% 
+  filter (!is.na (day))
+weeklyAirt   <- airt %>% group_by (week) %>% 
+  dplyr::summarise (airt = mean (airt, na.rm = T)) %>% filter (!is.na (week) & week != 0) # remove week 0 as it did not contain 7 days of data
+monthlyAirt  <- airt %>% group_by (month) %>% 
+  dplyr::summarise (airt = mean (airt, na.rm = T)) %>% filter (!is.na (month))
+yearlyAirt   <- airt %>% group_by (year) %>% 
+  dplyr::summarise (airt = mean (airt, na.rm = T)) %>% filter (is.na (year))
 
 # rank intervals from highest to lowest
 #----------------------------------------------------------------------------------------
@@ -114,24 +121,27 @@ yearlyAirt   <- add_column (yearlyAirt,   rank = rank (-yearlyAirt   [['airt']])
 
 # add variable for different aggregation period to prec (i.e. day, week, month, year)
 #----------------------------------------------------------------------------------------
+prec <- prec [-1, ] # delete first row, which was pre-1964
 prec <- add_column (prec, day   = format (prec [['TIMESTAMP']], '%Y-%m-%d'))
-prec <- add_column (prec, week  = floor ((prec [['TIMESTAMP']] -
-                                            (min (prec [['TIMESTAMP']], na.rm = T) -
-                                               3 * 60.0 * 60.0 * 24.0)) /
-                                           dweeks (1))) # TR - I think there might be something wrong with week association, as it is the same for temp and prec, although prec measurementsstarte a day earlier
+# the ISO 8601 week started two days before the data, therefore we need the two day 
+# offset (2 * 60.0 * 60.0 * 24.0)
+prec <- add_column (prec, 
+                    week  = floor ((airt [['TIMESTAMP']] - 
+                                      (min (airt [['TIMESTAMP']], na.rm = T) -
+                                         2 * 60.0 * 60.0 * 24.0)) / dweeks (1))) 
 prec <- add_column (prec, month = floor_date (prec [['TIMESTAMP']], 'month'))
 prec <- add_column (prec, year  = floor_date (prec [['TIMESTAMP']], 'year'))
 
 # create total prec over varying aggregation periods (i.e. day, week, month, year)
 #----------------------------------------------------------------------------------------
-dailyPrec   <- prec %>% group_by (day) %>% dplyr::summarise (prec = sum (prec, na.rm = T))
-dailyPrec   <- dailyPrec [!is.na (dailyPrec [['day']]),]
-weeklyPrec  <- prec %>% group_by (week) %>% dplyr::summarise (prec = sum (prec, na.rm = T))
-weeklyPrec  <- weeklyPrec [!is.na (weeklyPrec [['week']]), ]
-monthlyPrec <- prec %>% group_by (month) %>% dplyr::summarise (prec = sum (prec, na.rm = T))
-monthlyPrec <- monthlyPrec [!is.na (monthlyPrec [['month']]), ]
-yearlyPrec  <- prec %>% group_by (year) %>% dplyr::summarise (prec = sum (prec, na.rm = T))
-yearlyPrec  <- yearlyPrec [!is.na (yearlyPrec [['year']]), ]
+dailyPrec   <- prec %>% group_by (day) %>% 
+  dplyr::summarise (prec = sum (prec, na.rm = T)) %>% filter (!is.na (day))
+weeklyPrec  <- prec %>% group_by (week) %>% 
+  dplyr::summarise (prec = sum (prec, na.rm = T)) %>% filter (!is.na (week) & week != 0) # remove week 0 as it did not contain 7 days of data
+monthlyPrec <- prec %>% group_by (month) %>% 
+  dplyr::summarise (prec = sum (prec, na.rm = T)) %>% filter (!is.na (month))
+yearlyPrec  <- prec %>% group_by (year) %>% 
+  dplyr::summarise (prec = sum (prec, na.rm = T)) %>% filter (is.na (year))
 
 # rank intervals from highest to lowest
 #----------------------------------------------------------------------------------------
@@ -144,20 +154,22 @@ yearlyPrec   <- add_column (yearlyPrec,   rank = rank (-yearlyPrec   [['prec']])
 # add variable for different aggregation period to snow (i.e. day, week, month)
 #----------------------------------------------------------------------------------------
 snow <- add_column (snow, day   = format (snow [['TIMESTAMP']], '%Y-%m-%d'))
-snow <- add_column (snow, week  = floor ((snow [['TIMESTAMP']] -
-                                            (min (snow [['TIMESTAMP']], na.rm = T) -
-                                               3 * 60.0 * 60.0 * 24.0)) /
-                                           dweeks (1)))
+# the ISO 8601 week started two days before the data, therefore we need the two day 
+# offset (2 * 60.0 * 60.0 * 24.0)
+snow <- add_column (snow, 
+                    week  = floor ((snow [['TIMESTAMP']] - 
+                                    min (snow [['TIMESTAMP']], na.rm = T)) / 
+                                      dweeks (1)) + 1) # first week is complete, so "+1" assures that it is used
 snow <- add_column (snow, month = floor_date (snow [['TIMESTAMP']], 'month'))
 
 # create mean snow over varying aggregation periods (i.e. day, week, month)
 #----------------------------------------------------------------------------------------
-dailySnow   <- snow %>% group_by (day) %>% dplyr::summarise (snow = mean (snow, na.rm = T))
-dailySnow   <- dailySnow [!is.na (dailySnow [['day']]), ]
-weeklySnow  <- snow %>% group_by (week) %>% dplyr::summarise (snow = mean (snow, na.rm = T))
-weeklySnow  <- weeklySnow [!is.na (weeklySnow [['week']]), ]
-monthlySnow <- snow %>% group_by (month) %>% dplyr::summarise (snow = mean (snow, na.rm = T))
-monthlySnow <- monthlySnow [!is.na (monthlySnow [['month']]), ]
+dailySnow   <- snow %>% group_by (day) %>% 
+  dplyr::summarise (snow = mean (snow, na.rm = T)) %>% filter (!is.na (day))
+weeklySnow  <- snow %>% group_by (week) %>% 
+  dplyr::summarise (snow = mean (snow, na.rm = T)) %>% filter (!is.na (week))
+monthlySnow <- snow %>% group_by (month) %>% 
+  dplyr::summarise (snow = mean (snow, na.rm = T))  %>% filter (!is.na (month))
 
 # add variable for different aggregation periods to wind and gust (i.e. day, week, month, year)
 #----------------------------------------------------------------------------------------
@@ -166,14 +178,14 @@ gust <- add_column (gust, day = format (gust [['TIMESTAMP']], '%Y-%m-%d'))
 
 # create daily max wind speed over
 #----------------------------------------------------------------------------------------
-dailyWind <- gust %>% group_by (day) %>% dplyr::summarise (gust = max (gust, na.rm = T))
-dailyWind <- dailyWind [!is.na (dailyWind [["day"]]),]
+dailyWind <- gust %>% group_by (day) %>% 
+  dplyr::summarise (gust = max (gust, na.rm = T)) %>% filter (!is.na (day))
 
 # add variable for day to rehu to get mean daily relative humidity
 #----------------------------------------------------------------------------------------
 rehu <- add_column (rehu, day = format (rehu [["TIMESTAMP"]], "%Y-%m-%d"))
-dailyReHu <- rehu %>% group_by (day) %>% dplyr::summarise (relativeHumidity = mean (relativeHumidity, na.rm = T))
-dailyReHu <- dailyReHu [!is.na (dailyReHu [["day"]]), ]
+dailyReHu <- rehu %>% group_by (day) %>% 
+  dplyr::summarise (relativeHumidity = mean (relativeHumidity, na.rm = T)) %>% filter (!is.na (day))
 
 # calculate daily vapour pressure deficit
 #----------------------------------------------------------------------------------------
