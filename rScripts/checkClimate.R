@@ -111,7 +111,7 @@ checkExtremeTemperatures <- function (ptable, TEST = 0) {
     HOTDAY     <- FALSE
   }
   
-  # Check whether the last week was the warmest week on record
+  # Check whether the last calendar week was the warmest week on record
   #--------------------------------------------------------------------------------------
   if (max (weeklyAirt [['airt']], na.rm = T) <= 
       head (tail (weeklyAirt [['airt']], n = 2), n = 1) | TEST == 5) { 
@@ -187,7 +187,7 @@ checkExtremeTemperatures <- function (ptable, TEST = 0) {
   dailyTemperatureC <- head (tail (dailyAirt [['airt']], n = 2), n = 1)
   dailyTemperatureF <- CtoF (dailyTemperatureC)
   
-  # Check whether the last week was the coldest week on record
+  # check whether the last calendar week was the coldest week on record
   #--------------------------------------------------------------------------------------
   tempRank <- rank (weeklyAirt [['airt']]) 
   if (min (weeklyAirt [['airt']], na.rm = T) >= 
@@ -470,7 +470,7 @@ checkExtremePrecipitation <- function (ptable, TEST = 0) {
     WETDAY     <- FALSE
   }
   
-  # check whether the last week was the wettest week or a top 30 wettest week on record
+  # check whether the last calendar week was the wettest week or in top 30 wettest weeks
   #----------------------------------------------------------------------------------------
   if (max (weeklyPrec [['prec']], na.rm = T) <= head (tail (weeklyPrec [['prec']], n = 2), n = 1) | 
       TEST == 3) {
