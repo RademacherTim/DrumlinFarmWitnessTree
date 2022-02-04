@@ -108,7 +108,7 @@ weeklyAirt   <- airt %>% group_by (week) %>%
 monthlyAirt  <- airt %>% group_by (month) %>% 
   dplyr::summarise (airt = mean (airt, na.rm = T)) %>% filter (!is.na (month))
 yearlyAirt   <- airt %>% group_by (year) %>% 
-  dplyr::summarise (airt = mean (airt, na.rm = T)) %>% filter (is.na (year))
+  dplyr::summarise (airt = mean (airt, na.rm = T)) %>% filter (!is.na (year))
 
 # rank intervals from highest to lowest
 #----------------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ weeklyPrec  <- prec %>% group_by (week) %>%
 monthlyPrec <- prec %>% group_by (month) %>% 
   dplyr::summarise (prec = sum (prec, na.rm = T)) %>% filter (!is.na (month))
 yearlyPrec  <- prec %>% group_by (year) %>% 
-  dplyr::summarise (prec = sum (prec, na.rm = T)) %>% filter (is.na (year))
+  dplyr::summarise (prec = sum (prec, na.rm = T)) %>% filter (!is.na (year))
 
 # rank intervals from highest to lowest
 #----------------------------------------------------------------------------------------
