@@ -41,19 +41,23 @@
 airt <- read_csv (file = paste0 (path,'data/airt.csv'), col_types = cols ())
 gust <- read_csv (file = paste0 (path,'data/gust.csv'), col_types = cols ())
 prec <- read_csv (file = paste0 (path,'data/prec.csv'), col_types = cols ())
+snow <- read_csv (file = paste0 (path,'data/snow.csv'), col_types = cols ())
 # daily
 dailyAirt <- read_csv (file = paste0 (path,'data/dailyAirt.csv'), col_types = cols ())
 dailyMaxAirt <- read_csv (file = paste0 (path,'data/dailyMaxAirt.csv'), col_types = cols ())
 dailyPrec <- read_csv (file = paste0 (path,'data/dailyPrec.csv'), col_types = cols ())
 dailyReHu <- read_csv (file = paste0 (path,'data/dailyReHu.csv'), col_types = cols ())
+dailySnow <- read_csv (file = paste0 (path,'data/dailySnow.csv'), col_types = cols ())
 dailyVPD <- read_csv (file = paste0 (path,'data/dailyVPD.csv'), col_types = cols ())
 dailyWind <- read_csv (file = paste0 (path,'data/dailyWind.csv'), col_types = cols ())
 # weekly
 weeklyAirt <- read_csv (file = paste0 (path,'data/weeklyAirt.csv'), col_types = cols ())
 weeklyPrec <- read_csv (file = paste0 (path,'data/weeklyPrec.csv'), col_types = cols ())
+weeklySnow <- read_csv (file = paste0 (path,'data/weeklySnow.csv'), col_types = cols ())
 # monthly
 monthlyAirt <- read_csv (file = paste0 (path,'data/monthlyAirt.csv'), col_types = cols ())
 monthlyPrec <- read_csv (file = paste0 (path,'data/monthlyPrec.csv'), col_types = cols ())
+monthlySnow <- read_csv (file = paste0 (path,'data/monthlySnow.csv'), col_types = cols ())
 # yearly
 yearlyAirt <- read_csv (file = paste0 (path,'data/yearlyAirt.csv'), col_types = cols ())
 yearlyPrec <- read_csv (file = paste0 (path,'data/yearlyPrec.csv'), col_types = cols ())
@@ -1134,21 +1138,33 @@ checkStorm <- function (ptable, TEST = 0) {
   return (ptable)
 }
 
-# Check for rainfall in the last hour exceeding 3.0mm
+# check for precipitation in the last hour exceeding 3.0mm
 #----------------------------------------------------------------------------------------
-checkHourlyRainfall <- function (ptable, TEST = 0) {
+checkHourlyPrecipitation <- function (ptable, TEST = 0) {
   
-  # Calculate rainfall in last hour
+  # calculate rainfall in last hour
   #--------------------------------------------------------------------------------------
   lastHourPrec <- sum (tail (prec [['prec']], n = 4), na.rm = TRUE)
   
-  # Check for pretty heavy rain (more than 1.5mm per fifteen minutes)
+  # calculate the snow pack difference between the hour and the previous hour  
   #--------------------------------------------------------------------------------------
-  if (lastHourPrec > 3.0 | TEST == 1) {
+  lastHourSnow <- mean (tail (snow [['snow']], n = 4), na.rm = TRUE) - 
+    mean (head (tail (snow [['snow']], n = 8), n = 4), na.rm = TRUE)
+  
+  # check for pretty heavy rain (more than 1.5mm per fifteen minutes)
+  #--------------------------------------------------------------------------------------
+  if (lastHourPrec > 3.0 | TEST >= 1) {
     
-    # Get post details    
+    # get post details depending on whether it snowed or rained
     #------------------------------------------------------------------------------------
-    postDetails <- getPostDetails (fName = 'checkHourlyRainfall')
+    if (lastHourSnow <= 0.0 | TEST == 1) {
+      postDetails <- getPostDetails (fName = 'checkHourlyPrecipitation - Rain')
+    } else if (lastHourSnow > 0.0 | TEST == 2) {
+      postDetails <- getPostDetails (fName = 'checkHourlyPrecipitation - Snow')
+    }
+    
+    # add numbers to message
+    #------------------------------------------------------------------------------------
     if (substring (postDetails [['MessageText']], 1, 1) == 'I') {
       message <- sprintf (postDetails [['MessageText']], 
                           round (lastHourPrec, 2),
@@ -1169,38 +1185,52 @@ checkHourlyRainfall <- function (ptable, TEST = 0) {
                           expires     = expirDate)
   }
   
-  # Return the post details
+  # return the post details
   #--------------------------------------------------------------------------------------
   return (ptable)
 }
 
-# Check for rainfall in the last day exceeding 20.0 mm
+# check for precipitation in the last day exceeding 20.0 mm
 #----------------------------------------------------------------------------------------
-checkDailyRainfall <- function (ptable, TEST = 0) {
+checkDailyPrecipitation <- function (ptable, TEST = 0) {
   
-  # Calculate rainfall in last hour
+  # calculate rainfall in last hour
   #--------------------------------------------------------------------------------------
   lastDayPrec <- sum (tail (prec [['prec']], n = 4*24), na.rm = TRUE)
   
-  # Check for pretty heavy rain (more than 20mm per day)
+  # calculate the snow pack difference between the last two hours and two hours a day ago  
   #--------------------------------------------------------------------------------------
-  if (lastDayPrec > 20.0 | TEST == 1) {
+  lastDaySnow <- mean (tail (snow [['snow']], n = 8), na.rm = TRUE) - 
+    mean (head (tail (snow [['snow']], n = 4*24), n = 8), na.rm = TRUE)
+  
+  # check for pretty heavy rain (more than 20mm per day)
+  #--------------------------------------------------------------------------------------
+  if (lastDayPrec > 20.0 | TEST >= 1) {
     
-    # Load dependencies if necessary
+    # load dependencies if necessary
     #------------------------------------------------------------------------------------
     if (!existsFunction ('cols')) library ('tidyverse')
     
-    # Plot figure of growth and rainfall over the last two weeks
+    # plot figure of growth and rainfall over the last two weeks
     #------------------------------------------------------------------------------------
-    radGrowth <- calcRadialGrowth (temporalRes = 'daily', 
-                                   pdm_calibration_path = dataPath, 
-                                   PLOT = TRUE)
+    #radGrowth <- calcRadialGrowth (temporalRes = 'daily', 
+    #                               pdm_calibration_path = dataPath, 
+    #                               PLOT = TRUE)
     
-    # Get post details    
+    # check whether it was snow or rain and get message
     #------------------------------------------------------------------------------------
-    postDetails <- getPostDetails (fName = 'checkDailyRainfall')
-    message <- sprintf (postDetails [['MessageText']], 
-                        round (max (radGrowth [['dailyGrowth']], na.rm = TRUE), 2))
+    if (lastDaySnow <= 0.0 | TEST == 1) { # has reduced, thus it is raining 
+      postDetails <- getPostDetails (fName = 'checkDailyPrecipitation - Rain')
+      message <- "Yesterday, a big rain soaked the soil and my bark. My trunk swelled in diameter! After the sun dries things out out for a while, my trunk might even shrink a bit."
+      postDetails [["fFigure"]] <- FALSE
+      #postDetails [["FigureName"]] <- sprintf ('%s/tmp/dailyGrowth_%s.png',path,Sys.Date ())
+      postDetails [["FigureName"]] <- NA 
+      #message <- sprintf (postDetails [['MessageText']], 
+      #                    round (max (radGrowth [['dailyGrowth']], na.rm = TRUE), 2))
+    } else if (lastDaySnow > 0.0 | TEST == 2) { # snow pack has increased, thus it is snowing
+      postDetails <- getPostDetails (fName = 'checkDailyPrecipitation - Snow')
+      message <- postDetails [["MessageText"]]
+    }
     delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7)) * 60.0 * 60.0 * 24.0
     expirDate <- sprintf ("%s %s", 
                           format (Sys.time () + delay, format = '%Y-%m-%d %H:%M:%S'), 
@@ -1208,7 +1238,7 @@ checkDailyRainfall <- function (ptable, TEST = 0) {
     ptable    <- add_row (ptable, 
                           priority    = postDetails [['Priority']], 
                           fFigure     = postDetails [['fFigure']],
-                          figureName  = sprintf ('%s/tmp/dailyGrowth_%s.png',path,Sys.Date ()), 
+                          figureName  = postDetails [["FigureName"]] , 
                           message     = message, 
                           hashtags    = postDetails [['Hashtags']], 
                           expires     = expirDate)

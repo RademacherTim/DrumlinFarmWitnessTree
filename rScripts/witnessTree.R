@@ -24,6 +24,7 @@
 # TR - Add messages based on the snow pillow data from Harvard Forest
 # TR - Install dendrometer and sapflow sensor
 # TR - Reintegrate dendrometer and sapflow sensor into messaging
+# TR      - It is needed for full functionality of checkDailyPrecipitation ()
 # TR - Add stream gage data for Harvard Forest
 #----------------------------------------------------------------------------------------
 
@@ -133,11 +134,11 @@ posts <- monthlyClimateSummary     (posts) # Summarise and compare last month's 
                                            # to the long term average.
 posts <- checkFrost (posts) # Check for first frost of autumn and late frost in the 
                             # early growing season.
-posts <- checkHeatWave       (posts) # Check for a heat wave.
-posts <- checkStorm          (posts) # Check for storm or rather a windy day.
-posts <- checkHourlyRainfall (posts) # Check for hourly rainfall above 3.0mm.
-# TR - checkDailyRainfall() relies on dendrometer, which needs re-installing 
-# posts <- checkDailyRainfall  (posts) # Check for daily rainfall above 20.0mm.
+posts <- checkHeatWave            (posts) # Check for a heat wave.
+posts <- checkStorm               (posts) # Check for storm or rather a windy day.
+posts <- checkHourlyPrecipitation (posts) # Check for hourly rainfall above 3.0mm.
+# checkDailyPrecipitation relies on dendrometer, so I reduced its functionality for now.
+posts <- checkDailyPrecipitation  (posts) # Check for daily rainfall above 20.0mm.
 print (paste0 (Sys.time (), '; rScritps: (1.8)  Climatic conditions have been checked.'))
 
 # generate new posts concerning the morphology of the tree
