@@ -1151,13 +1151,17 @@ checkHourlyPrecipitation <- function (ptable, TEST = 0) {
   lastHourSnow <- mean (tail (snow [['snow']], n = 4), na.rm = TRUE) - 
     mean (head (tail (snow [['snow']], n = 8), n = 4), na.rm = TRUE)
   
+  # calculate mean temperature in the last hour  
+  #--------------------------------------------------------------------------------------
+  lastHourTemp <- mean (tail (airt [['airt']], n = 4), na.rm = TRUE)
+  
   # check for pretty heavy rain (more than 1.5mm per fifteen minutes)
   #--------------------------------------------------------------------------------------
   if (lastHourPrec > 3.0 | TEST >= 1) {
     
     # get post details depending on whether it snowed or rained
     #------------------------------------------------------------------------------------
-    if (lastHourSnow <= 0.0 | TEST == 1) {
+    if (lastHourSnow <= 0.0 & lastHourTemp > 0 | TEST == 1) {
       postDetails <- getPostDetails (fName = 'checkHourlyPrecipitation - Rain')
     } else if (lastHourSnow > 0.0 | TEST == 2) {
       postDetails <- getPostDetails (fName = 'checkHourlyPrecipitation - Snow')
@@ -1247,5 +1251,54 @@ checkDailyPrecipitation <- function (ptable, TEST = 0) {
   # Return the post details
   #--------------------------------------------------------------------------------------
   return (ptable)
+}
+
+# check snow pack
+#----------------------------------------------------------------------------------------
+checkSnowPack <- function (ptable, TEST = 0) {
+  
+  # check whether this is the largest snow pack ever recorded
+  #--------------------------------------------------------------------------------------
+  if (tail (snow$snow, n = 1) == max (snow$snow, na.rm = TRUE) | TEST == 1) {
+    LARGEST <- TRUE
+    LARGE <- FALSE
+  # or one of the largest snow pack top 10 % of days with a snow pack 
+  } else if (tail (dailySnow$snow, n = 1) > 
+             quantile (dailySnow$snow [which (dailySnow$snow > 0)], 0.9) |
+             TEST == 2) {
+    LARGEST <- FALSE
+    LARGE <- TRUE
+  # or there is nothing interesting happening with the snow pack
+  } else {
+    return (0)
+  }
+  
+  # get post details
+  #--------------------------------------------------------------------------------------
+  if (LARGEST) {
+    postDetails <- getPostDetails (fName = 'checkSnowPack - largest')
+    message <- sprintf (postDetails [['MessageText']], 
+                        round (tail (snow$snow, n = 1), 0),
+                        round (mmtoInches (tail (snow$snow, n = 1)), 2),
+                        round (tail (snow$snow, n = 1) - sort (snow$snow, TRUE) [2], 0),
+                        round (mmtoInches (tail (snow$snow, n = 1) - sort (snow$snow, TRUE) [2]), 2))
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7)) * 60.0 * 60.0  
+  } else if (LARGE) {
+    postDetails <- getPostDetails (fName = 'checkSnowPack - large')
+    message <- sprintf (postDetails [['MessageText']], 
+                        round (tail (dailySnow$snow, n = 1), 0),
+                        round (mmtoInches (tail (dailySnow$snow, n = 1)), 2))
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7 ,7)) * 60.0 * 60.0 * 24.0
+  }
+  expirDate <- sprintf ("%s %s", 
+                        format (Sys.time () + delay, format = '%Y-%m-%d %H:%M:%S'), 
+                        treeTimeZone) %>% lubridate::as_datetime (tz = treeTimeZone)
+  ptable    <- add_row (ptable, 
+                        priority    = postDetails [['Priority']], 
+                        fFigure     = postDetails [['fFigure']],
+                        figureName  = postDetails [["FigureName"]] , 
+                        message     = message, 
+                        hashtags    = postDetails [['Hashtags']], 
+                        expires     = expirDate)
 }
 #=======================================================================================#

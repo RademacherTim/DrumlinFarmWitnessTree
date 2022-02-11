@@ -171,8 +171,9 @@ getPostDetails <- function (fName) {
   
   # Extract relevant post details
   #--------------------------------------------------------------------------------------
-  postDetails <- temp %>% select (-c (Status, Event, Logic, Variables, VariablesExamples, 
-                                      Link, NumberOfCharacters))
+  postDetails <- temp %>% dplyr::select (-c (Status, Event, Logic, Variables, 
+                                             VariablesExamples, Link, 
+                                             NumberOfCharacters))
   
   # Check whether there is a figure accompanying the post
   #--------------------------------------------------------------------------------------

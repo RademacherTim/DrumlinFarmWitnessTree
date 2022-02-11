@@ -19,9 +19,13 @@
 
 # To-do list:
 #----------------------------------------------------------------------------------------
+# TR - Change email address associated with the account
 # TR - Improve the weekly check-list
 # TR - Pass facebook review and obtain pages access token to resume posting to facebook page
-# TR - Add messages based on the snow pillow data from Harvard Forest
+# TR - Add messages based on the snow pillow data from Harvard Forest:
+#       Long period without snow cover in winter
+#       Record snow pack
+#       Summaries comparing the winter snow conditions to previous years
 # TR - Install dendrometer and sapflow sensor
 # TR - Reintegrate dendrometer and sapflow sensor into messaging
 # TR      - It is needed for full functionality of checkDailyPrecipitation ()
@@ -134,11 +138,12 @@ posts <- monthlyClimateSummary     (posts) # Summarise and compare last month's 
                                            # to the long term average.
 posts <- checkFrost (posts) # Check for first frost of autumn and late frost in the 
                             # early growing season.
-posts <- checkHeatWave            (posts) # Check for a heat wave.
-posts <- checkStorm               (posts) # Check for storm or rather a windy day.
-posts <- checkHourlyPrecipitation (posts) # Check for hourly rainfall above 3.0mm.
+posts <- checkHeatWave            (posts) # check for a heat wave.
+posts <- checkStorm               (posts) # check for storm or rather a windy day.
+posts <- checkHourlyPrecipitation (posts) # check for hourly rainfall above 3.0mm.
 # checkDailyPrecipitation relies on dendrometer, so I reduced its functionality for now.
-posts <- checkDailyPrecipitation  (posts) # Check for daily rainfall above 20.0mm.
+posts <- checkDailyPrecipitation  (posts) # check for daily rainfall above 20.0mm.
+posts <- checkSnowPack            (posts) # check for extraordinary snow packs 
 print (paste0 (Sys.time (), '; rScritps: (1.8)  Climatic conditions have been checked.'))
 
 # generate new posts concerning the morphology of the tree
