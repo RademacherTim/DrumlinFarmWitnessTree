@@ -24,7 +24,6 @@
 # TR - Pass facebook review and obtain pages access token to resume posting to facebook page
 # TR - Add messages based on the snow pillow data from Harvard Forest:
 #       Long period without snow cover in winter
-#       Record snow pack
 #       Summaries comparing the winter snow conditions to previous years
 # TR - Install dendrometer and sapflow sensor
 # TR - Reintegrate dendrometer and sapflow sensor into messaging
