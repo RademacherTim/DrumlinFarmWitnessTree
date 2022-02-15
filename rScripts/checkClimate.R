@@ -1270,7 +1270,8 @@ checkSnowPack <- function (ptable, TEST = 0) {
     LARGE <- TRUE
   # or there is nothing interesting happening with the snow pack
   } else {
-    return (0)
+    # just return the post table
+    return (ptable)
   }
   
   # get post details
