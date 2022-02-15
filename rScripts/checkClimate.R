@@ -553,7 +553,7 @@ checkExtremePrecipitation <- function (ptable, TEST = 0) {
   #----------------------------------------------------------------------------------------
   if (WETDAY | WETTESTDAY | WETWEEK | WETTESTWEEK | WETMONTH | WETTESTMONTH | WETYEAR | 
       WETTESTYEAR | DRYMONTH | DRIESTMONTH | DRYYEAR | DRIESTYEAR) {
-    if (WETYEAR) {
+    if (WETYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
       postDetails <- getPostDetails ('wetYear')
       rank <- head (tail (yearlyPrec [['rank']], n = 2), n = 1)
       message <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1,
@@ -562,7 +562,7 @@ checkExtremePrecipitation <- function (ptable, TEST = 0) {
       # Expires after 19 days
       delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
     }
-    if (DRYYEAR) {
+    if (DRYYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
       postDetails <- getPostDetails ('dryYear')
       rank <- head (tail (rank (yearlyPrec [['prec']]), n = 2), n = 1)
       message <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1, 
@@ -574,7 +574,7 @@ checkExtremePrecipitation <- function (ptable, TEST = 0) {
       # Expires after 19 days
       delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
     }
-    if (WETTESTYEAR) {
+    if (WETTESTYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
       postDetails <- getPostDetails ('wettestYear')
       message   <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1,
                             round (mmtoInches (head (tail (yearlyPrec [['prec']], n = 2), n = 1)), 1),
@@ -583,7 +583,7 @@ checkExtremePrecipitation <- function (ptable, TEST = 0) {
       # Expires after 19 days
       delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
     }
-    if (DRIESTYEAR) {
+    if (DRIESTYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
       postDetails <- getPostDetails ('driestYear')
       message <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1, 
                           round (mmtoInches (head (tail (yearlyPrec [['prec']], n = 2), n = 1)), 1),
