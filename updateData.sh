@@ -18,9 +18,9 @@ then
    exit 1 # terminate script and indicate error
 fi
 
-# run the updateClimateData R script to download climate data
+# run the update_climate.R R script to download climate data
 #----------------------------------------------------------------------------------------
-Rscript ${WITNESSTREEPATH}code/rScripts/updateClimateData.R ${WITNESSTREEPATH}
+Rscript ${WITNESSTREEPATH}code/rScripts/update_climate.R ${WITNESSTREEPATH}
 if [ $? != 0 ]
 then 
    # write error message into log

@@ -12,18 +12,17 @@
 # 
 #---------------------------------------------------------------------------------------
 
-# get arguments from command line (i.e., absolute path to working directory)
-#----------------------------------------------------------------------------------------
-args = commandArgs (trailingOnly = TRUE)
-if (length (args) == 0) {
-  stop ("Error: At least one argument must be supplied (path to witnessTree directory).",
+# get arguments from command line (i.e., absolute path to working directory) -----------
+args = commandArgs(trailingOnly = TRUE)
+if (length(args) == 0) {
+  stop("Error: At least one argument must be supplied (path to witnessTree directory).",
         call. = FALSE)
-} else if (length (args) >= 1) {
-  path                 = args [1] # absolute path
+} else if (length(args) >= 1) {
+  path = args[1] # absolute path
 } else {
-  stop ("Error: Too many command line arguments supplied to R.")
+  stop("Error: Too many command line arguments supplied to R.")
 }
-#print (path)
+#print(path)
 
 # load module specific dependencies
 #----------------------------------------------------------------------------------------
@@ -194,8 +193,7 @@ dailyVPD <- tibble (day = dailyReHu [["day"]],
                                    TdegC = dailyAirt [["airt"]] [dailyAirt [["day"]] >= dailyReHu [["day"]] [1]],
                                    Pa = 101)) # Should make pressure a variable as well.
 
-# Write csv files of the main variables
-#----------------------------------------------------------------------------------------
+# write csv files of the main variables -------------------------------------------------
 readr::write_csv (x = airt, file = sprintf ("%sdata/airt.csv", path))
 readr::write_csv (x = gust, file = sprintf ("%sdata/gust.csv", path))
 readr::write_csv (x = prec, file = sprintf ("%sdata/prec.csv", path))
@@ -220,8 +218,7 @@ readr::write_csv (x = monthlySnow, file = sprintf ("%sdata/monthlySnow.csv", pat
 readr::write_csv (x = yearlyAirt, file = sprintf ("%sdata/yearlyAirt.csv", path))
 readr::write_csv (x = yearlyPrec, file = sprintf ("%sdata/yearlyPrec.csv", path))
 
-# delete temporary variables
-#----------------------------------------------------------------------------------------
+# delete temporary variables ------------------------------------------------------------
 rm (met_HF_current, met_HF_gap, met_HF_old, met_HF_shaler, snow_HF_past, snow_HF_current,
     rehu, wind, dates, dates2, path)
 #========================================================================================
