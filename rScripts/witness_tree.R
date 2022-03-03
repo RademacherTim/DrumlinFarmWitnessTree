@@ -13,7 +13,7 @@
 #                   Shawna Greyeyes, Bijan Seyednasrollah for their invaluable 
 #                   contributions.
 #
-# Last update: 2022-01-21
+# Last update: 2022-03-03
 #
 #----------------------------------------------------------------------------------------
 
@@ -29,53 +29,48 @@
 # TR - Reintegrate dendrometer and sapflow sensor into messaging
 # TR      - It is needed for full functionality of checkDailyPrecipitation ()
 # TR - Add stream gage data for Harvard Forest
+# TR - Adapt tidyverse syntax as recommended by: https://style.tidyverse.org/
 #----------------------------------------------------------------------------------------
 
-# get the absolute path to the directory including images and data 
-#----------------------------------------------------------------------------------------
-args = commandArgs (trailingOnly = TRUE)
-if (length (args) == 0) {
-  stop ("Error: At least one argument must be supplied (path to witnessTree directory).",
-        call. = FALSE)
-} else if (length (args) >= 1) {
+# get the absolute path to the directory including images and data ----------------------
+args = commandArgs(trailingOnly = TRUE)
+if (length(args) == 0) {
+  stop("Error: At least one argument must be supplied (path to witnessTree directory).",
+       call. = FALSE)
+} else if (length(args) >= 1) {
   # default output file
-  path       = args [1]
+  path = args[1]
 } else {
-  stop ("Error: Too many command line arguments supplied to R.")
+  stop("Error: Too many command line arguments supplied to R.")
 }
 
-# output the paths at run-time to confirm that they were found
-#----------------------------------------------------------------------------------------
-print (paste0 (Sys.time (), '; rScritps: (1.1)  Path loaded: ',path,'.'))
+# output the paths at run-time to confirm that they were found --------------------------
+print(paste0(Sys.time(), '; rScritps: (1.1)  Path loaded: ', path, '.'))
 
-# set the working directory and path to R scripts
-#----------------------------------------------------------------------------------------
-setwd (path)
-rPath <- paste0 (path, 'code/rScripts/')
+# set the working directory and path to R scripts ---------------------------------------
+setwd(path)
+rPath <- paste0(path, 'code/rScripts/')
 
-# load dependencies
-#----------------------------------------------------------------------------------------
-if (!existsFunction ('%>%'))     suppressPackageStartupMessages (library ('tidyverse'))
-if (!existsFunction ('as_date')) suppressPackageStartupMessages (library ('lubridate'))
+# load dependencies ---------------------------------------------------------------------
+if (!existsFunction('%>%'))     suppressPackageStartupMessages(library('tidyverse'))
+if (!existsFunction('as_date')) suppressPackageStartupMessages(library('lubridate'))
 
-# source functions
-#----------------------------------------------------------------------------------------
-source  (paste0 (rPath, 'postHandling.R')) # TR - Sources fine but ought to check all functions
-source  (paste0 (rPath, 'checkEvents.R'))   
-source  (paste0 (rPath, 'checkClimate.R'))
-#source  (paste0 (rPath, 'calcSapFlow.R'))    # TR - Needs sapflow sensor and data
-#source  (paste0 (rPath, 'calcRadialGrowth.R')) # TR - Needs dendrometer
-source  (paste0 (rPath, 'checkPhysiology.R')) 
-source  (paste0 (rPath, 'checkPhenology.R'))
-source  (paste0 (rPath, 'checkMorphology.R'))
-source  (paste0 (rPath, 'checkCommunity.R'))
-source  (paste0 (rPath, 'generateInteractivity.R'))
-print (paste0 (Sys.time (), '; rScripts: (1.2)  Dependencies loaded.'))
+# source functions ----------------------------------------------------------------------
+source(paste0(rPath, 'postHandling.R')) # TR - Sources fine but ought to check all functions
+source(paste0(rPath, 'checkEvents.R'))   
+source(paste0(rPath, 'checkClimate.R'))
+#source(paste0(rPath, 'calcSapFlow.R'))    # TR - Needs sapflow sensor and data
+#source(paste0(rPath, 'calcRadialGrowth.R')) # TR - Needs dendrometer
+source(paste0(rPath, 'checkPhysiology.R')) 
+source(paste0(rPath, 'checkPhenology.R'))
+source(paste0(rPath, 'checkMorphology.R'))
+source(paste0(rPath, 'checkCommunity.R'))
+source(paste0(rPath, 'generateInteractivity.R'))
+print(paste0(Sys.time(), '; rScripts: (1.2)  Dependencies loaded.'))
 
-# source basic data and stats for the trees
-#----------------------------------------------------------------------------------------
-source  (paste0 (rPath, 'treeStats.R'))
-print (paste0 (Sys.time (), '; rScritps: (1.3)  Basic stats loaded.'))
+# source basic data and stats for the trees ---------------------------------------------
+source(paste0(rPath, 'treeStats.R'))
+print(paste0(Sys.time(), '; rScritps: (1.3)  Basic stats loaded.'))
 
 # read in previously generated posts, if not first iteration
 #----------------------------------------------------------------------------------------

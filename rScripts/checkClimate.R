@@ -546,139 +546,20 @@ checkExtremePrecipitation <- function (ptable, TEST = 0) {
     DRYYEAR    <- FALSE
   }
   
-  # get the appropriate message 
-  # messages are overwritten in order of priority with dry conditions being prioritised 
-  # over wet conditions and instantaneous events being prioritised over longer-term events
-  # (e.g., day > year). There will be more opportunities to post about a longer-term events
+  # get the appropriate message for extreme precipitation event
   #----------------------------------------------------------------------------------------
-  if (WETDAY | WETTESTDAY | WETWEEK | WETTESTWEEK | WETMONTH | WETTESTMONTH | WETYEAR | 
-      WETTESTYEAR | DRYMONTH | DRIESTMONTH | DRYYEAR | DRIESTYEAR) {
-    if (WETYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
-      postDetails <- getPostDetails ('wetYear')
-      rank <- head (tail (yearlyPrec [['rank']], n = 2), n = 1)
-      message <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1,
-                          rank, findOrdinalSuffix (rank), treeLocationName)
-      
-      # Expires after 19 days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (DRYYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
-      postDetails <- getPostDetails ('dryYear')
-      rank <- head (tail (rank (yearlyPrec [['prec']]), n = 2), n = 1)
-      message <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1, 
-                          rank, findOrdinalSuffix (rank), 
-                          round (mmtoInches (head (tail (yearlyPrec [['prec']], n = 2), n = 1)), 1),
-                          round (head (tail (yearlyPrec [['prec']], n = 2), n = 1), 1),
-                          year (Sys.Date ()))
-      
-      # Expires after 19 days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (WETTESTYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
-      postDetails <- getPostDetails ('wettestYear')
-      message   <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1,
-                            round (mmtoInches (head (tail (yearlyPrec [['prec']], n = 2), n = 1)), 1),
-                            round (head (tail (yearlyPrec [['prec']], n = 2), n = 1), 1))
-      
-      # Expires after 19 days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (DRIESTYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
-      postDetails <- getPostDetails ('driestYear')
-      message <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1, 
-                          round (mmtoInches (head (tail (yearlyPrec [['prec']], n = 2), n = 1)), 1),
-                          round (head (tail (yearlyPrec [['prec']], n = 2), n = 1), 1),
-                          year (Sys.Date ()))
-      
-      # Expires after 19 days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (WETMONTH) {
-      postDetails <- getPostDetails ('wetMonth')
-      rank <- head (tail (monthlyPrec [['rank']], n = 2), n = 1)
-      message   <- sprintf (postDetails [['MessageText']], treeLocationName,
-                            round (mmtoInches (head (tail (monthlyPrec [['prec']], n = 2), n = 1)), 1),
-                            round (head (tail (monthlyPrec [['prec']], n = 2), n = 1), 1),
-                            rank, findOrdinalSuffix (rank))
-      
-      # Expires after 19 days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (DRYMONTH) {
-      postDetails <- getPostDetails ('dryMonth')
-      rank <- head (tail (rank (monthlyPrec [['prec']]), n = 2), n = 1)
-      message <- sprintf (postDetails [['MessageText']], treeLocationName, 
-                          rank, findOrdinalSuffix (rank), 
-                          round (mmtoInches (head (tail (monthlyPrec [['prec']], n = 2), n = 1)), 2),
-                          round (head (tail (monthlyPrec [['prec']], n = 2), n = 1), 2))
-      
-      # Expires after 19 days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (WETTESTMONTH) {
-      postDetails <- getPostDetails ('wettestMonth')
-      message   <- sprintf (postDetails [['MessageText']], 
-                            round (mmtoInches (head (tail (monthlyPrec [['prec']], n = 2), n = 1)), 1),
-                            round (head (tail (monthlyPrec [['prec']], n = 2), n = 1), 1))
-      
-      # Expires after 19 days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (DRIESTMONTH) {
-      postDetails <- getPostDetails ('driestMonth')
-      message <- sprintf (postDetails [['MessageText']], 
-                          round (mmtoInches (head (tail (monthlyPrec [['prec']], n = 2), n = 1)), 2),
-                          round (head (tail (monthlyPrec [['prec']], n = 2), n = 1), 2))
-      
-      # Expires after 19 days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (WETWEEK) {
-      postDetails <- getPostDetails ('wetWeek')
-      rank <- head (tail (weeklyPrec [['rank']], n = 2), n = 1)
-      message   <- sprintf (postDetails [['MessageText']], 
-                            round (mmtoInches (mean (weeklyPrec [['prec']], na.rm = TRUE)), 3),
-                            round (mean (weeklyPrec [['prec']], na.rm = TRUE), 2),
-                            treeLocationName,
-                            round (mmtoInches (head (tail (weeklyPrec [['prec']], n = 2), n = 1)), 3),
-                            round (head (tail (weeklyPrec [['prec']], n = 2), n = 1), 2),
-                            rank, findOrdinalSuffix (rank))
-      
-      # Expires after six days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (WETTESTWEEK) {
-      postDetails <- getPostDetails ('wettestWeek')
-      message   <- sprintf (postDetails [['MessageText']], 
-                            round (mmtoInches (head (tail (weeklyPrec [['prec']], n = 2), n = 1)), 3),
-                            round (head (tail (weeklyPrec [['prec']], n = 2), n = 1), 2))
-      
-      # Expires after six days
-      delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-    }
-    if (WETDAY) {
-      postDetails <- getPostDetails ('wetDay')
-      rank <- head (tail (dailyPrec [['rank']], n = 2), n = 1)
-      message   <- sprintf (postDetails [['MessageText']], 
-                            rank, findOrdinalSuffix (rank),
-                            round (mmtoInches (head (tail (dailyPrec [['prec']], n = 2), n = 1)), 3),
-                            round (head (tail (dailyPrec [['prec']], n = 2), n = 1), 2))
-      
-      # Expires at the end of the day
-      delay <- 0
-    } 
-    if (WETTESTDAY) {
-      postDetails <- getPostDetails ('wettestDay')
-      message   <- sprintf (postDetails [['MessageText']], 
-                            round (mmtoInches (head (tail (dailyPrec [['prec']], n = 2), n = 1)), 3),
-                            round (head (tail (dailyPrec [['prec']], n = 2), n = 1), 2))
-      
-      # Expires at the end of the day
-      delay <- 0
-    }
+  if (WETYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
+    postDetails <- getPostDetails ('wetYear')
+    rank <- head (tail (yearlyPrec [['rank']], n = 2), n = 1)
+    message <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1,
+                        rank, findOrdinalSuffix (rank), treeLocationName)
+    
+    # expires after 19 days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
     
     # compile post details
-    #------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------------------
     ptable    <- add_row (ptable,
                           priority = postDetails [["Priority"]],
                           fFigure  = postDetails [["fFigure"]],
@@ -686,7 +567,231 @@ checkExtremePrecipitation <- function (ptable, TEST = 0) {
                           hashtags = postDetails [["Hashtags"]],
                           expires  = expiresIn (delay = delay))
   }
-  
+  if (DRYYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
+    postDetails <- getPostDetails ('dryYear')
+    rank <- head (tail (rank (yearlyPrec [['prec']]), n = 2), n = 1)
+    message <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1, 
+                        rank, findOrdinalSuffix (rank), 
+                        round (mmtoInches (head (tail (yearlyPrec [['prec']], n = 2), n = 1)), 1),
+                        round (head (tail (yearlyPrec [['prec']], n = 2), n = 1), 1),
+                        year (Sys.Date ()))
+    
+    # expires after 19 days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+  if (WETTESTYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
+    postDetails <- getPostDetails ('wettestYear')
+    message   <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1,
+                          round (mmtoInches (head (tail (yearlyPrec [['prec']], n = 2), n = 1)), 1),
+                          round (head (tail (yearlyPrec [['prec']], n = 2), n = 1), 1))
+    
+    # expires after 19 days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+  if (DRIESTYEAR & lubridate::month (Sys.Date ()) == 1) { # only post in January
+    postDetails <- getPostDetails ('driestYear')
+    message <- sprintf (postDetails [['MessageText']], year (Sys.Date())-1, 
+                        round (mmtoInches (head (tail (yearlyPrec [['prec']], n = 2), n = 1)), 1),
+                        round (head (tail (yearlyPrec [['prec']], n = 2), n = 1), 1),
+                        year (Sys.Date ()))
+    
+    # expires after 19 days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+  if (WETMONTH) {
+    postDetails <- getPostDetails ('wetMonth')
+    rank <- head (tail (monthlyPrec [['rank']], n = 2), n = 1)
+    message   <- sprintf (postDetails [['MessageText']], treeLocationName,
+                          round (mmtoInches (head (tail (monthlyPrec [['prec']], n = 2), n = 1)), 1),
+                          round (head (tail (monthlyPrec [['prec']], n = 2), n = 1), 1),
+                          rank, findOrdinalSuffix (rank))
+    
+    # expires after 19 days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+  if (DRYMONTH) {
+    postDetails <- getPostDetails ('dryMonth')
+    rank <- head (tail (rank (monthlyPrec [['prec']]), n = 2), n = 1)
+    message <- sprintf (postDetails [['MessageText']], treeLocationName, 
+                        rank, findOrdinalSuffix (rank), 
+                        round (mmtoInches (head (tail (monthlyPrec [['prec']], n = 2), n = 1)), 2),
+                        round (head (tail (monthlyPrec [['prec']], n = 2), n = 1), 2))
+    
+    # expires after 19 days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+  if (WETTESTMONTH) {
+    postDetails <- getPostDetails ('wettestMonth')
+    message   <- sprintf (postDetails [['MessageText']], 
+                          round (mmtoInches (head (tail (monthlyPrec [['prec']], n = 2), n = 1)), 1),
+                          round (head (tail (monthlyPrec [['prec']], n = 2), n = 1), 1))
+    
+    # expires after 19 days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+  if (DRIESTMONTH) {
+    postDetails <- getPostDetails ('driestMonth')
+    message <- sprintf (postDetails [['MessageText']], 
+                        round (mmtoInches (head (tail (monthlyPrec [['prec']], n = 2), n = 1)), 2),
+                        round (head (tail (monthlyPrec [['prec']], n = 2), n = 1), 2))
+    
+    # expires after 19 days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+  if (WETWEEK) {
+    postDetails <- getPostDetails ('wetWeek')
+    rank <- head (tail (weeklyPrec [['rank']], n = 2), n = 1)
+    message   <- sprintf (postDetails [['MessageText']], 
+                          round (mmtoInches (mean (weeklyPrec [['prec']], na.rm = TRUE)), 3),
+                          round (mean (weeklyPrec [['prec']], na.rm = TRUE), 2),
+                          treeLocationName,
+                          round (mmtoInches (head (tail (weeklyPrec [['prec']], n = 2), n = 1)), 3),
+                          round (head (tail (weeklyPrec [['prec']], n = 2), n = 1), 2),
+                          rank, findOrdinalSuffix (rank))
+    
+    # expires after six days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+  if (WETTESTWEEK) {
+    postDetails <- getPostDetails ('wettestWeek')
+    message   <- sprintf (postDetails [['MessageText']], 
+                          round (mmtoInches (head (tail (weeklyPrec [['prec']], n = 2), n = 1)), 3),
+                          round (head (tail (weeklyPrec [['prec']], n = 2), n = 1), 2))
+    
+    # expires after six days
+    #----------------------------------------------------------------------------------
+    delay <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+  if (WETDAY) {
+    postDetails <- getPostDetails ('wetDay')
+    rank <- head (tail (dailyPrec [['rank']], n = 2), n = 1)
+    message   <- sprintf (postDetails [['MessageText']], 
+                          rank, findOrdinalSuffix (rank),
+                          round (mmtoInches (head (tail (dailyPrec [['prec']], n = 2), n = 1)), 3),
+                          round (head (tail (dailyPrec [['prec']], n = 2), n = 1), 2))
+    
+    # expires at the end of the day
+    #----------------------------------------------------------------------------------
+    delay <- 0
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  } 
+  if (WETTESTDAY) {
+    postDetails <- getPostDetails ("wettestDay")
+    message   <- sprintf (postDetails [["MessageText"]], 
+                          round (mmtoInches (head (tail (dailyPrec [["prec"]], n = 2), n = 1)), 3),
+                          round (head (tail (dailyPrec [["prec"]], n = 2), n = 1), 2))
+    
+    # expires at the end of the day
+    #----------------------------------------------------------------------------------
+    delay <- 0
+    
+    # compile post details
+    #----------------------------------------------------------------------------------
+    ptable    <- add_row (ptable,
+                          priority = postDetails [["Priority"]],
+                          fFigure  = postDetails [["fFigure"]],
+                          message  = message,
+                          hashtags = postDetails [["Hashtags"]],
+                          expires  = expiresIn (delay = delay))
+  }
+
   # return the table with posts
   #--------------------------------------------------------------------------------------
   return (ptable)

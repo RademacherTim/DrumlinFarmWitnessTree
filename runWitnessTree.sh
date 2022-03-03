@@ -20,7 +20,7 @@ fi
 
 # run the witnessTree R script to generate messages
 #----------------------------------------------------------------------------------------
-Rscript ${WITNESSTREEPATH}code/rScripts/witnessTree.R ${WITNESSTREEPATH} ${GSPostsKey}
+Rscript ${WITNESSTREEPATH}code/rScripts/witness_tree.R ${WITNESSTREEPATH} ${GSPostsKey}
 if [ $? != 0 ]
 then 
    # write error message into log
