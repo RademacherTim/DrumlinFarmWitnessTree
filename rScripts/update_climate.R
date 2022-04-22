@@ -4,7 +4,7 @@
 # meteorological data from the Fisher meteorological station for the the Witness Tree at 
 # Harvard Forest.
 # 
-# Weather datais documented here: 
+# Weather data is documented here: 
 # https://harvardforest1.fas.harvard.edu/exist/apps/datasets/showData.html?id=HF001
 #
 # Snow pillow data is documented here:
@@ -24,8 +24,7 @@ if (length(args) == 0) {
 }
 #print(path)
 
-# load module specific dependencies
-#----------------------------------------------------------------------------------------
+# load module specific dependencies -----------------------------------------------------
 if (!existsFunction ("esat"))      suppressPackageStartupMessages (library ("plantecophys")) # for calculation of vapour pressure deficit
 if (!existsFunction ("as_date"))   suppressPackageStartupMessages (library ("lubridate"))
 if (!existsFunction ("cols"))      suppressPackageStartupMessages (library ("readr"))

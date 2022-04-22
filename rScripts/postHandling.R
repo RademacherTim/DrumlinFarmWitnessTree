@@ -127,13 +127,11 @@ reEvaluatePriorityOf <- function (ptable) {
 #----------------------------------------------------------------------------------------
 getPostDetails <- function (fName) {
   
-  # load dependencies
-  #--------------------------------------------------------------------------------------
-  if (!existsFunction ('read_excel')) library ('readxl')
-  if (!existsFunction ('add_column')) library ('tibble')
+  # load dependencies -------------------------------------------------------------------
+  if (!existsFunction("read_csv")) library("readr")
+  if (!existsFunction("add_column")) library("tibble")
   
-  # get posts spreadsheet
-  #--------------------------------------------------------------------------------------
+  # get posts spreadsheet ---------------------------------------------------------------
   input <- readr::read_csv (file = sprintf ('%stmp/postsDetails.csv', path),
                             col_types = c (
                               FunctionID         = col_character (),
@@ -155,22 +153,17 @@ getPostDetails <- function (fName) {
                               NumberOfCharacters = col_number ()
                             ))
   
-  # Find appropriate lines using the function name
-  #--------------------------------------------------------------------------------------
-  temp <- input [input [['FunctionID']] == fName &
-                   !is.na (input [['FunctionID']]), ]
+  # find appropriate lines using the function name --------------------------------------
+  temp <- input [input$FunctionID == fName & !is.na (input$FunctionID), ]
   
   # If there is more than one message for an event choose a message randomly
   # N.B.: To make sure that both treatments get choosen with the same probability, we 
   # need to have the same number of messages for both treatments (sober scientific data 
   # versus narrative environmental facts).
   #---------------------------------------------------------------------------------------
-  if (dim (temp) [1] > 1) {
-    temp <- sample_n (temp, 1)
-  }
+  if (dim (temp) [1] > 1) temp <- sample_n (temp, 1)
   
-  # Extract relevant post details
-  #--------------------------------------------------------------------------------------
+  # extract relevant post details --------------------------------------------------------
   postDetails <- temp %>% dplyr::select (-c (Status, Event, Logic, Variables, 
                                              VariablesExamples, Link, 
                                              NumberOfCharacters))

@@ -18,9 +18,9 @@ then
    exit 1 # terminate script and indicate error
 fi
 
-# Run the updatePostsSpreadsheet.R script to download the post spreadsheet
+# Run the update_posts_spreadsheet.R script to download the post spreadsheet
 #----------------------------------------------------------------------------------------
-Rscript ${WITNESSTREEPATH}code/rScripts/updatePostsSpreadsheet.R ${WITNESSTREEPATH} ${GoogleSheetsPostsKey}
+Rscript ${WITNESSTREEPATH}code/rScripts/update_posts_spreadsheet.R ${WITNESSTREEPATH} ${GoogleSheetsPostsKey}
 if [ $? != 0 ] # add condition so that this in only run once a day
 then 
    # write error message into log

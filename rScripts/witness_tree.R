@@ -9,27 +9,27 @@
 # Project lead: Tim Rademacher (rademacher.tim@gmail.com)
 #
 # Acknowledgements: Thanks above all to Clarisse Hart and Taylor Jones! Thanks also to 
-#                   David Basler, Clarisse Hart, Hannah Robbins, Kyle Wyche, 
-#                   Shawna Greyeyes, Bijan Seyednasrollah for their invaluable 
-#                   contributions.
+#                   David Basler, Hannah Robbins, Kyle Wyche, Shawna Greyeyes, 
+#                   Bijan Seyednasrollah for their contributions.
 #
-# Last update: 2022-03-03
+# Last update: 2022-04-22
+#
+# Notes on code style: I tried to follow the recommended tidyverse syntax, which can be 
+# found at https://style.tidyverse.org/.
 #
 #----------------------------------------------------------------------------------------
 
 # To-do list:
 #----------------------------------------------------------------------------------------
 # TR - Change email address associated with the account
-# TR - Improve the weekly check-list
-# TR - Pass facebook review and obtain pages access token to resume posting to facebook page
+# TR - Integrate data from the witness tree kit
+#        In particular the  dendrometer and sapflow sensor into messaging
+#        The dendrometer is needed for full functionality of checkDailyPrecipitation ()
+#        Develop new functionality based on the other witness tree kit sensors
+# TR - Add stream gage data for Harvard Forest
 # TR - Add messages based on the snow pillow data from Harvard Forest:
 #       Long period without snow cover in winter
 #       Summaries comparing the winter snow conditions to previous years
-# TR - Install dendrometer and sapflow sensor
-# TR - Reintegrate dendrometer and sapflow sensor into messaging
-# TR      - It is needed for full functionality of checkDailyPrecipitation ()
-# TR - Add stream gage data for Harvard Forest
-# TR - Adapt tidyverse syntax as recommended by: https://style.tidyverse.org/
 #----------------------------------------------------------------------------------------
 
 # get the absolute path to the directory including images and data ----------------------

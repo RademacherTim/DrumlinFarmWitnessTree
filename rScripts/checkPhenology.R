@@ -10,77 +10,68 @@
 
 # function to post a phenocam image when colour change is ongoing
 #----------------------------------------------------------------------------------------
-checkLeafColourChange <- function (ptable, TEST = 0) {
+checkLeafColourChange <- function(ptable, TEST = 0) {
   
   # don't bother checking this during summer and winter
   #--------------------------------------------------------------------------------------
-  if ((substr (Sys.Date (), 6, 10) > "03-01" & substr (Sys.Date (), 6, 10) < "06-15") | 
-      (substr (Sys.Date (), 6, 10) > "09-01" & substr (Sys.Date (), 6, 10) < "11-15") | 
+  if ((substr(Sys.Date (), 6, 10) > "03-01" & substr(Sys.Date(), 6, 10) < "06-15") | 
+      (substr(Sys.Date (), 6, 10) > "09-01" & substr(Sys.Date(), 6, 10) < "11-15") | 
       TEST >= 1) {
     
-    # check season in memory
-    #------------------------------------------------------------------------------------
-    if (file.exists ('memory.csv')) {
-      memory <- read_csv (file = paste0 (path, 'code/memory.csv'), col_types = cols ())
+    # check season in memory ------------------------------------------------------------
+    if (file.exists('memory.csv')) {
+      memory <- read_csv(file = paste0(path, 'code/memory.csv'), col_types = cols())
     } else {
-      stop (paste0 (Sys.time (), '; checkPhenology.R; Error: There is not memory file.'))
+      stop(paste0(Sys.time(), '; checkPhenology.R; Error: There is not memory file.'))
     }
     
-    # set site threshold (n.b. this needs to vary by sites)
-    #------------------------------------------------------------------------------------
+    # set site threshold (n.b. this needs to vary by sites) -----------------------------
     siteGCCThreshold <- 0.35 # threshold is roughly fine for the DB ROI of the 
                              # harvardbarn and harvardbarn2 camera, but not for the 
                              # witness tree, where a reasonable value would be closer to 
                              # 0.365 
     
-    # get phenocam data
-    #------------------------------------------------------------------------------------
-    gcc <- read_csv (paste0 (path,'data/gcc.csv'), col_types = cols ())
+    # get phenocam data -----------------------------------------------------------------
+    gcc <- read_csv(paste0(path,'data/gcc.csv'), col_types = cols())
     
-    # is it not the growing season and gcc indicates leaf unfolding has occurred?
-    #------------------------------------------------------------------------------------
-    if ((!memory [['growingSeason']] & gcc [['gcc_90']] [2] > siteGCCThreshold) | 
+    # is it not the growing season and gcc indicates leaf unfolding has occurred? -------
+    if ((!memory$growingSeason & gcc$gcc_90 [2] > siteGCCThreshold) | 
         TEST == 1) {
-      postDetails <- getPostDetails ("checkLeafUnfolding")
-      FigureName  <- 'witnesstree_PhenoCamImage' # TR - Need to change this to make it dependent on a variable 
-      delay  <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-      ptable <- add_row (ptable,
-                         priority    = postDetails [["Priority"]],
-                         fFigure     = postDetails [['fFigure']],
-                         figureName  = sprintf ('%s/tmp/%s.jpg', path, FigureName),
-                         message     = postDetails [["MessageText"]],
-                         hashtags    = postDetails [["Hashtags"]],
-                         expires     = expiresIn (delay))
+      postDetails <- getPostDetails("checkLeafUnfolding")
+      FigureName  <- 'witnesstree_PhenoCamImage' 
+      delay  <- as.numeric(substring(postDetails$ExpirationDate, 7, 8)) * 60 * 60
+      ptable <- add_row(ptable,
+                        priority    = postDetails [["Priority"]],
+                        fFigure     = postDetails [['fFigure']],
+                        figureName  = sprintf ('%s/tmp/%s.jpg', path, FigureName),
+                        message     = postDetails [["MessageText"]],
+                        hashtags    = postDetails [["Hashtags"]],
+                        expires     = expiresIn (delay))
       
-      # update growingSeason boolean to start the season
-      #----------------------------------------------------------------------------------
-      memory [['growingSeason']] <- TRUE
-      write_csv (memory, paste0 (path, 'code/memory.csv'))
+      # update growingSeason boolean to start the season --------------------------------
+      memory$growingSeason <- TRUE
+      write_csv(memory, paste0(path, 'code/memory.csv'))
       
-    # is it the growing season and gcc indicates leaf shedding has occurred?
-    #------------------------------------------------------------------------------------
-    } else if ((memory [['growingSeason']] & gcc [['gcc_90']] [2] < siteGCCThreshold) | 
-               TEST == 2) {
-      postDetails <- getPostDetails ("checkLeafColourChange - endOfSeason")
+    # is it the growing season and gcc indicates leaf shedding has occurred? ------------
+    } else if ((memory$growingSeason & gcc$gcc_90 [2] < siteGCCThreshold) | TEST == 2) {
+      postDetails <- getPostDetails("checkLeafColourChange - endOfSeason")
       FigureName  <- 'witnesstree_PhenoCamImage'
-      delay  <- as.numeric (substring (postDetails [['ExpirationDate']], 7, 8)) * 60 * 60
-      ptable <- add_row (ptable,
-                         priority    = postDetails [["Priority"]],
-                         fFigure     = postDetails [['fFigure']],
-                         figureName  = sprintf ('%s/tmp/%s.jpg', path, FigureName),
-                         message     = postDetails [['MessageText']],
-                         hashtags    = postDetails [["Hashtags"]],
-                         expires     = expiresIn (delay))
+      delay  <- as.numeric(substring(postDetails$ExpirationDate, 7, 8)) * 60 * 60
+      ptable <- add_row(ptable,
+                        priority    = postDetails [["Priority"]],
+                        fFigure     = postDetails [['fFigure']],
+                        figureName  = sprintf ('%s/tmp/%s.jpg', path, FigureName),
+                        message     = postDetails [['MessageText']],
+                        hashtags    = postDetails [["Hashtags"]],
+                        expires     = expiresIn (delay))
       
-      # update growingSeason boolean to end the season
-      #-----------------------------------------------------------------------------------
-      memory [['growingSeason']] <- FALSE
-      write_csv (memory, paste0 (path, 'code/memory.csv'))
+      # update growingSeason boolean to end the season ----------------------------------
+      memory$growingSeason <- FALSE
+      write_csv(memory, paste0(path, 'code/memory.csv'))
       
     }
   }
-  # return table with posts
-  #------------------------------------------------------------------------------------
+  # return table with posts -------------------------------------------------------------
   return (ptable)
 }
 
