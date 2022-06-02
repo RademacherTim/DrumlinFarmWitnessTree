@@ -69,7 +69,7 @@ raw_data <- raw_data %>% mutate(temp = as.numeric(`Temperature (C)`),
                                 sapf = as.numeric(`Sapflow (cm/hr)`)) %>%
   select(timestamp, temp, pres, rhum, sapf, dendro)
 
-# cut everything before the 18th of April 2022, when the kit was working properly -------
+# cut everything before the 18th of April 2022, when the kit was not working properly -------
 raw_data <- raw_data %>% filter(as_date(timestamp) >= as_date("2022-04-18"))
 
 plot(x = raw_data$timestamp, y = raw_data$sapf, typ = "l")

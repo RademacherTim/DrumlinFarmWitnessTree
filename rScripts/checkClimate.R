@@ -36,12 +36,11 @@
 # TR - I might also want to delay messages for December and last year, so that they do not come out straight after new year's resolutions.
 # TR - I need to introduce a memory or something to make sure that I am not repeating the same messages for hottest/coldest temperature over and over again.
 
-# read in instantaneous weather data
-#----------------------------------------------------------------------------------------
-airt <- read_csv (file = paste0 (path,'data/airt.csv'), col_types = cols ())
-gust <- read_csv (file = paste0 (path,'data/gust.csv'), col_types = cols ())
-prec <- read_csv (file = paste0 (path,'data/prec.csv'), col_types = cols ())
-snow <- read_csv (file = paste0 (path,'data/snow.csv'), col_types = cols ())
+# read in instantaneous weather data ----------------------------------------------------
+airt <- read_csv(file = paste0(path,'data/airt.csv'), col_types = cols())
+gust <- read_csv(file = paste0(path,'data/gust.csv'), col_types = cols())
+prec <- read_csv(file = paste0(path,'data/prec.csv'), col_types = cols())
+snow <- read_csv(file = paste0(path,'data/snow.csv'), col_types = cols())
 # daily
 dailyAirt <- read_csv (file = paste0 (path,'data/dailyAirt.csv'), col_types = cols ())
 dailyMaxAirt <- read_csv (file = paste0 (path,'data/dailyMaxAirt.csv'), col_types = cols ())
@@ -1049,7 +1048,7 @@ checkFrost <- function (ptable, TEST = 0) {
   
   # was there a frost today (calendar day)?
   #--------------------------------------------------------------------------------------
-  if (min (airt [["airt"]] [airt [["day"]] == Sys.Date ()], na.rm = TRUE) < 0.0) {
+  if (min (airt$airt [airt$day == Sys.Date ()], na.rm = TRUE) < 0.0) {
   
     # by default there is no frost-related message
     #------------------------------------------------------------------------------------

@@ -25,50 +25,47 @@ if (length(args) == 0) {
 #print(path)
 
 # load module specific dependencies -----------------------------------------------------
-if (!existsFunction ("esat"))      suppressPackageStartupMessages (library ("plantecophys")) # for calculation of vapour pressure deficit
-if (!existsFunction ("as_date"))   suppressPackageStartupMessages (library ("lubridate"))
-if (!existsFunction ("cols"))      suppressPackageStartupMessages (library ("readr"))
-if (!existsFunction ("tibble"))    suppressPackageStartupMessages (library ("tibble"))
-if (!existsFunction ("summarise")) suppressPackageStartupMessages (library ("dplyr"))
+if (!existsFunction("esat"))      suppressPackageStartupMessages(library("plantecophys")) # for calculation of vapour pressure deficit
+if (!existsFunction("as_date"))   suppressPackageStartupMessages(library("lubridate"))
+if (!existsFunction("cols"))      suppressPackageStartupMessages(library("readr"))
+if (!existsFunction("tibble"))    suppressPackageStartupMessages(library("tibble"))
+if (!existsFunction("summarise")) suppressPackageStartupMessages(library("dplyr"))
 
-# read climate data from the appropriate weather station
-#----------------------------------------------------------------------------------------
-suppressWarnings (met_HF_shaler <- 
-  readr::read_csv (file = url ("http://harvardforest.fas.harvard.edu/data/p00/hf000/hf000-01-daily-m.csv"),
-                   col_types = cols ()))
-suppressWarnings (met_HF_gap <- 
-  readr::read_csv (file = url ("http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-08-hourly-m.csv"),
-                   col_types = cols ()))
-suppressWarnings (met_HF_old <- 
-  readr::read_csv (file = url ("http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-10-15min-m.csv"),
-                   col_types = cols ()))
-suppressWarnings (met_HF_current <- 
-  readr::read_csv (file = url ("http://harvardforest.fas.harvard.edu/sites/harvardforest.fas.harvard.edu/files/weather/qfm.csv"),
-                   col_types = cols ()))
-suppressWarnings (snow_HF_past <- 
-  readr::read_csv (file = url ("https://harvardforest.fas.harvard.edu/data/p15/hf155/hf155-02-15min.csv"), 
-                   col_types = cols ()))
-suppressWarnings (snow_HF_current <- 
-  readr::read_csv (file = url ("http://harvardforest.fas.harvard.edu/sites/harvardforest.fas.harvard.edu/files/weather/sqf.csv"),
-                   col_types = cols ()))
+# read climate data from the appropriate weather station --------------------------------
+suppressWarnings(met_HF_shaler <- 
+  readr::read_csv(file = url("http://harvardforest.fas.harvard.edu/data/p00/hf000/hf000-01-daily-m.csv"),
+                  col_types = cols()))
+suppressWarnings(met_HF_gap <- 
+  readr::read_csv(file = url("http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-08-hourly-m.csv"),
+                  col_types = cols()))
+suppressWarnings(met_HF_old <- 
+  readr::read_csv(file = url("http://harvardforest.fas.harvard.edu/data/p00/hf001/hf001-10-15min-m.csv"),
+                  col_types = cols()))
+suppressWarnings(met_HF_current <- 
+  readr::read_csv(file = url("http://harvardforest.fas.harvard.edu/sites/harvardforest.fas.harvard.edu/files/weather/qfm.csv"),
+                  col_types = cols()))
+suppressWarnings(snow_HF_past <- 
+  readr::read_csv(file = url("https://harvardforest.fas.harvard.edu/data/p15/hf155/hf155-02-15min.csv"), 
+                  col_types = cols()))
+suppressWarnings(snow_HF_current <- 
+  readr::read_csv(file = url("http://harvardforest.fas.harvard.edu/sites/harvardforest.fas.harvard.edu/files/weather/sqf.csv"),
+                  col_types = cols()))
 
-# create timestamp for each file
-#----------------------------------------------------------------------------------------
-met_HF_gap$TIMESTAMP <- as.POSIXct (met_HF_gap$datetime, 
-                                    format = '%Y-%m-%d %H:%M:%S',
-                                    tz = 'EST') 
-met_HF_shaler$TIMESTAMP <- as.POSIXct (met_HF_shaler$date, 
-                                       format = '%Y-%m-%d',
+# create timestamp for each file --------------------------------------------------------
+met_HF_gap$TIMESTAMP <- as.POSIXct(met_HF_gap$datetime, 
+                                   format = '%Y-%m-%d %H:%M:%S',
+                                   tz = 'EST') 
+met_HF_shaler$TIMESTAMP <- as.POSIXct(met_HF_shaler$date, 
+                                      format = '%Y-%m-%d',
+                                      tz = 'EST') 
+met_HF_old$TIMESTAMP <- as.POSIXct(met_HF_old$datetime, 
+                                   format = '%Y-%m-%d %H:%M:%S',
+                                   tz = 'EST') 
+met_HF_current$TIMESTAMP <- as.POSIXct(met_HF_current$datetime, 
+                                       format = '%Y-%m-%d %H:%M:%S',
                                        tz = 'EST') 
-met_HF_old$TIMESTAMP <- as.POSIXct (met_HF_old$datetime, 
-                                    format = '%Y-%m-%d %H:%M:%S',
-                                    tz = 'EST') 
-met_HF_current$TIMESTAMP <- as.POSIXct (met_HF_current$datetime, 
-                                         format = '%Y-%m-%d %H:%M:%S',
-                                         tz = 'EST') 
 
-# extract variables of interest
-#----------------------------------------------------------------------------------------
+# extract variables of interest ---------------------------------------------------------
 dates  <- c (met_HF_shaler$TIMESTAMP, met_HF_gap$TIMESTAMP, met_HF_old$TIMESTAMP, 
              met_HF_current$TIMESTAMP)
 dates2 <- c (met_HF_gap$TIMESTAMP, met_HF_old$TIMESTAMP, met_HF_current$TIMESTAMP)
@@ -167,17 +164,17 @@ dailySnow   <- snow %>% group_by (day) %>%
 weeklySnow  <- snow %>% group_by (week) %>% 
   dplyr::summarise (snow = mean (snow, na.rm = T)) %>% filter (!is.na (week))
 monthlySnow <- snow %>% group_by (month) %>% 
-  dplyr::summarise (snow = mean (snow, na.rm = T))  %>% filter (!is.na (month))
+  dplyr::summarise(snow = mean (snow, na.rm = T))  %>% filter (!is.na (month))
 
 # add variable for different aggregation periods to wind and gust (i.e. day, week, month, year)
 #----------------------------------------------------------------------------------------
-wind <- add_column (wind, day = format (wind [['TIMESTAMP']], '%Y-%m-%d'))
-gust <- add_column (gust, day = format (gust [['TIMESTAMP']], '%Y-%m-%d'))
+wind <- add_column(wind, day = format (wind [['TIMESTAMP']], '%Y-%m-%d'))
+gust <- add_column(gust, day = format (gust [['TIMESTAMP']], '%Y-%m-%d'))
 
 # create daily max wind speed over
 #----------------------------------------------------------------------------------------
-dailyWind <- gust %>% group_by (day) %>% 
-  dplyr::summarise (gust = max (gust, na.rm = T)) %>% filter (!is.na (day))
+dailyWind <- gust %>% group_by(day) %>% 
+  dplyr::summarise (gust = max(gust, na.rm = T)) %>% filter(!is.na (day))
 
 # add variable for day to rehu to get mean daily relative humidity
 #----------------------------------------------------------------------------------------
