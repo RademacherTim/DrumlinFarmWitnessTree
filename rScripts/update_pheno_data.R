@@ -17,9 +17,9 @@ if (length(args) == 0) {
 }
 
 # load dependencies ---------------------------------------------------------------------
-if (!existsFunction('cols'))              suppressPackageStartupMessages(library ('readr'))
-if (!existsFunction('download_phenocam')) suppressPackageStartupMessages(library ('phenocamr'))
-if (!existsFunction('get_midday_list'))   suppressPackageStartupMessages(library ('phenocamapi')) 
+if (!existsFunction('cols'))              suppressPackageStartupMessages(library('readr'))
+if (!existsFunction('download_phenocam')) suppressPackageStartupMessages(library('phenocamr'))
+if (!existsFunction('get_midday_list'))   suppressPackageStartupMessages(library('phenocamapi')) 
 # phenocamapi package needs to be installed from github
 
 # get phenocam site names for the specific tree -----------------------------------------
@@ -61,9 +61,9 @@ for (s in siteNames) {
 }
 
 # write a local file of the phenological data in the data directory ---------------------
-write_csv (x = gcc, file = paste0 (path, 'data/gcc.csv'))
+write_csv(x = gcc, file = paste0(path, 'data/gcc.csv'))
 
 # clean-up ------------------------------------------------------------------------------
-rm (siteNames, s, gcc, gcc_temp, path, site_midday_harvardbarn, site_midday_harvardbarn2,
-    site_midday_witnesstree)
+rm(siteNames, s, gcc, gcc_temp, path, site_midday_harvardbarn, site_midday_harvardbarn2,
+   site_midday_witnesstree)
 #========================================================================================
