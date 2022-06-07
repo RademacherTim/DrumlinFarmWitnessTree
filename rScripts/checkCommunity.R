@@ -6,7 +6,7 @@
 #   1)  explainSeedDispersal                    Between 1st of Sep and 30th of Nov
 #   2)  checkCommunityWildlife                  All year, when image is added to the 
 #                                               directory
-#   3)  explainGypsyMothHerbivory               Between 1st of Sep and 30th of Nov
+#   3)  explainSpongyMothHerbivory               Between 1st of Sep and 30th of Nov
 #   4)  explainGallWasps                        Between 1st of Sep and 30th of Nov
 #----------------------------------------------------------------------------------------
 
@@ -101,11 +101,11 @@ checkCommunityWildlife <- function(ptable, TEST = 0) {
   return(ptable)
 } 
 
-# Explain gypsy moth herbivory ----------------------------------------------------------
-explainGypsyMothHerbivory <- function(ptable, TEST = 0) {
+# Explain spongy moth herbivory ----------------------------------------------------------
+explainSpongyMothHerbivory <- function(ptable, TEST = 0) {
   if (substring(Sys.Date(), 6, 10) > '05-15' & substring(Sys.Date(), 6, 10) < '08-31'| 
       TEST == 1) {
-    postDetails <- getPostDetails("explainGypsyMothHerbivory")
+    postDetails <- getPostDetails("explainSpongyMothHerbivory")
     ptable    <- add_row(ptable, 
                          priority   = postDetails [["Priority"]],
                          fFigure    = postDetails [['fFigure']],
