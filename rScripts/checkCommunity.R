@@ -6,7 +6,7 @@
 #   1)  explainSeedDispersal                    Between 1st of Sep and 30th of Nov
 #   2)  checkCommunityWildlife                  All year, when image is added to the 
 #                                               directory
-#   3)  explainSpongyMothHerbivory               Between 1st of Sep and 30th of Nov
+#   3)  explainSpongyMothHerbivory              Between 1st of Sep and 30th of Nov
 #   4)  explainGallWasps                        Between 1st of Sep and 30th of Nov
 #----------------------------------------------------------------------------------------
 

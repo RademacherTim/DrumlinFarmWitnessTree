@@ -43,4 +43,4 @@ fi
 #fi
 
 # write time and date into log file in the tmp/ folder ----------------------------------
-echo ${DATE} >> ${WITNESSTREEPATH}logs/logFileDataUpdate.txt
+echo ${DATE} 'All ran smoothly.' >> ${WITNESSTREEPATH}logs/logFileDataUpdate.txt

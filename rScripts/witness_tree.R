@@ -12,7 +12,7 @@
 #                   David Basler, Hannah Robbins, Kyle Wyche, Shawna Greyeyes, 
 #                   Bijan Seyednasrollah for their contributions.
 #
-# Last update: 2022-04-22
+# Last update: 2022-06-28
 #
 # Notes on code style: I tried to follow the recommended tidyverse syntax, which can be 
 # found at https://style.tidyverse.org/.
@@ -146,12 +146,12 @@ posts <- explainDimensions (posts)
 
 # generate new posts concerning the community surrounding the tree
 #----------------------------------------------------------------------------------------
-posts <- explainSeedDispersal      (posts) # give background on seed dispersal between 
-                                           # 1st of September and end of November
-posts <- explainGypsyMothHerbivory (posts) # give background on gypsy moths between 15th 
-                                           # of May and end of August
-posts <- explainGallWasps          (posts) # give background about galls
-posts <- checkCommunityWildlife    (posts) # post about visitors from the wildlife camera  
+posts <- explainSeedDispersal       (posts) # give background on seed dispersal between 
+                                            # 1st of September and end of November
+posts <- explainSpongyMothHerbivory (posts) # give background on spongy moths between 
+                                            # 15th of May and end of August
+posts <- explainGallWasps           (posts) # give background about galls
+posts <- checkCommunityWildlife     (posts) # post about visitors from the wildlife camera  
 print (paste0 (Sys.time (), '; rScritps: (1.9)  Community related messages have been checked.'))
 
 # generate new posts concerning physiology
