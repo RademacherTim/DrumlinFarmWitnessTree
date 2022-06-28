@@ -76,7 +76,7 @@ print(paste0(Sys.time(), '; rScritps: (1.3)  Basic stats loaded.'))
 #----------------------------------------------------------------------------------------
 if (file.exists (paste0 (path, 'posts/posts.csv'))) {
   posts <- read_csv (paste0 (path, 'posts/posts.csv'), 
-                     col_names = T, col_types = c ('ilcccT'))
+                     col_names = T, col_types = c ('dlcccT'))
 } else { # create a tibble for posts
   posts <- tibble (priority    = 0,  # priority of message to be posted (int; 
                    # between 0 for low and 10 for highest)
