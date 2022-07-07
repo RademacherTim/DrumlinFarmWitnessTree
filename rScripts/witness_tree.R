@@ -21,7 +21,6 @@
 
 # To-do list:
 #----------------------------------------------------------------------------------------
-# TR - Change email address associated with the account
 # TR - Integrate data from the witness tree kit
 #        In particular the  dendrometer and sapflow sensor into messaging
 #        The dendrometer is needed for full functionality of checkDailyPrecipitation ()

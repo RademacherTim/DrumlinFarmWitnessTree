@@ -29,7 +29,7 @@ siteNames = c('witnesstree', 'harvardbarn','harvardbarn2')
 for (s in siteNames) {
   
   # get list of midday image names for the three cameras --------------------------------
-  assign(paste0('site_midday_',s), get_midday_list(s))
+  assign(paste0('site_midday_',s), get_midday_list(s, direct = FALSE))
   
   # download only the last midday image for each camera ---------------------------------
   download.file(tail(get(paste0('site_midday_',s)), n = 1), 
