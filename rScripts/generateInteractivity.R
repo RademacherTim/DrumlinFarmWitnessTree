@@ -1,74 +1,69 @@
 #========================================================================================
 # Script to generate responses for interactive functions              
 #----------------------------------------------------------------------------------------
-generateInteractiveResponses <- function (TEST = 0) {
+generateInteractiveResponses <- function(TEST = 0) {
   
-  # create responses tibble
-  #--------------------------------------------------------------------------------------
-  responses <- tibble (season = NA, topic = NA, reply = NA)
+  # create responses tibble -------------------------------------------------------------
+  responses <- tibble(season = NA, topic = NA, reply = NA)
   
   # check air temperature and compare to the mean air temperature for a two hour window 
-  # on this day of the year.
-  #--------------------------------------------------------------------------------------
-  airTemp <- tail (airt [['airt']], n = 1)
-  meanAirTemp <- mean (airt [['airt']] [yday (airt [['day']]) == yday (Sys.Date ()) & 
-                                          hour (airt [['TIMESTAMP']]) > hour (Sys.time ()) - 1 &
-                                          hour (airt [['TIMESTAMP']]) < hour (Sys.time ()) + 1],
+  # on this day of the year -------------------------------------------------------------
+  airTemp <- tail(airt[['airt']], n = 1)
+  meanAirTemp <- mean(airt[['airt']][yday(airt[['day']]) == yday(Sys.Date()) & 
+                                     hour(airt[['TIMESTAMP']]) > hour(Sys.time()) - 1 &
+                                     hour(airt[['TIMESTAMP']]) < hour(Sys.time()) + 1],
                        na.rm = T)
   
-  # check precipitation
-  #--------------------------------------------------------------------------------------
-  precip <- sum (tail (dailyPrec [['prec']], n = 14), na.rm = T) # biweekly sum
-  from <- head (tail (dailyPrec [['day']], n = 14), n = 1)
-  for (iYr in 1964:year (Sys.Date ())) {
-    sum14 <- sum (dailyPrec [['prec']] [year (dailyPrec [['day']]) == iYr & 
-                                          yday (dailyPrec [['day']]) >= yday (from) & 
-                                          yday (dailyPrec [['day']]) <= yday (Sys.Date ())],
-                  na.rm = T)
+  # check precipitation -----------------------------------------------------------------
+  precip <- sum(tail(dailyPrec[['prec']], n = 14), na.rm = T) # biweekly sum
+  from <- head(tail(dailyPrec[['day']], n = 14), n = 1)
+  for (iYr in 1964:year(Sys.Date ())) {
+    sum14 <- sum(dailyPrec[['prec']][year(dailyPrec[['day']]) == iYr & 
+                                     yday(dailyPrec[['day']]) >= yday(from) & 
+                                     yday(dailyPrec[['day']]) <= yday(Sys.Date())],
+                 na.rm = T)
     if (iYr == 1964) {
-      meanPrecip <- tibble (year = iYr, mean = sum14)
+      meanPrecip <- tibble(year = iYr, mean = sum14)
     } else {
-      meanPrecip <- add_row (meanPrecip, year = iYr, mean = sum14)
+      meanPrecip <- add_row(meanPrecip, year = iYr, mean = sum14)
     }
   }
-  meanPrecip <- mean (meanPrecip [['mean']], na.rm = T)
+  meanPrecip <- mean(meanPrecip[['mean']], na.rm = T)
   
-  # determine whether it is the growing season or not
-  #--------------------------------------------------------------------------------------
-  if (Sys.Date () > as.POSIXct ('15-03', format = '%d-%m') & 
-      Sys.Date () < as.POSIXct ('15-10', format = '%d-%m')) { # growing season
+  # determine whether it is the growing season or not -----------------------------------
+  if (Sys.Date() > as.POSIXct('15-03', format = '%d-%m') & 
+      Sys.Date() < as.POSIXct('15-10', format = '%d-%m')) { # growing season
     
-    # set season to growing season
-    #------------------------------------------------------------------------------------
+    # set season to growing season ------------------------------------------------------
     season <- 'growing season'
     
-    # get responses based on temperature
-    #------------------------------------------------------------------------------------
-    if (round (airTemp) > round (meanAirTemp)) { # hot
-      postDetails <- getPostDetails ('generateInteractivity - growing season - hot')
-    } else if (round (airTemp) == round (meanAirTemp)) { # average
-      postDetails <- getPostDetails ('generateInteractivity - growing season - average temperature')
+    # get responses based on temperature ------------------------------------------------
+    if (round(airTemp) > round(meanAirTemp)) { # hot
+      postDetails <- getPostDetails('generateInteractivity - growing season - hot')
+    } else if (round(airTemp) == round(meanAirTemp)) { # average
+      postDetails <- getPostDetails('generateInteractivity - growing season - average temperature')
     } else if (airTemp < meanAirTemp) { # cold
-      postDetails <- getPostDetails ('generateInteractivity - growing season - cold')
+      postDetails <- getPostDetails('generateInteractivity - growing season - cold')
     }
-    postDetails [['MessageText']] <- sprintf (postDetails [['MessageText']], round (airTemp, 1),
-                                              round (9.0 / 5.0 * (airTemp) + 32, 1))
-    responses <- add_row (responses, season = season, topic = 'temperature', 
-                          reply = postDetails [['MessageText']])
+    postDetails[['MessageText']] <- sprintf(postDetails[['MessageText']], round(airTemp, 1),
+                                            round (9.0 / 5.0 * (airTemp) + 32, 1))
+    responses <- add_row(responses, 
+                         season = season, 
+                         topic = 'temperature', 
+                         reply = postDetails[['MessageText']])
     
-    # get responses based on precipitation
-    #------------------------------------------------------------------------------------
-    if (round (precip) > round (meanPrecip)) { # wet
-      postDetails <- getPostDetails ('generateInteractivity - growing season - wet')
-      growth <- calcRadialGrowth (pdm_calibration_path = dataPath, temporalRes = 'annual')
-      postDetails [['MessageText']] <- sprintf (postDetails [['MessageText']], round (dbh * 100.0 + bark + growth / 10, 2))
-    } else if (round (precip) == round (meanPrecip)) { # average
-      postDetails <- getPostDetails ('generateInteractivity - growing season - average precipitation')
-    } else if (round (precip) < round (meanPrecip)) { # dry
-      postDetails <- getPostDetails ('generateInteractivity - growing season - dry')
+    # get responses based on precipitation ----------------------------------------------
+    if (round(precip) > round(meanPrecip)) { # wet
+      postDetails <- getPostDetails('generateInteractivity - growing season - wet')
+    } else if (round(precip) == round(meanPrecip)) { # average
+      postDetails <- getPostDetails('generateInteractivity - growing season - average precipitation')
+    } else if (round(precip) < round(meanPrecip)) { # dry
+      postDetails <- getPostDetails('generateInteractivity - growing season - dry')
     }
-    responses <- add_row (responses, season = season, topic = 'rainfall', 
-                          reply = postDetails [['MessageText']])
+    responses <- add_row (responses, 
+                          season = season, 
+                          topic = 'rainfall', 
+                          reply = postDetails[['MessageText']])
     
   } else { # off-season
     
