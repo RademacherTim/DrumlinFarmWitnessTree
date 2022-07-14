@@ -22,7 +22,7 @@
 # To-do list:
 #----------------------------------------------------------------------------------------
 # TR - Integrate data from the witness tree kit
-#        In particular the  dendrometer and sapflow sensor into messaging
+#        Sapflow sensor does currently not work
 #        The dendrometer is needed for full functionality of checkDailyPrecipitation ()
 #        Develop new functionality based on the other witness tree kit sensors
 # TR - Add stream gage data for Harvard Forest
