@@ -55,16 +55,17 @@ if (!existsFunction('%>%'))     suppressPackageStartupMessages(library('tidyvers
 if (!existsFunction('as_date')) suppressPackageStartupMessages(library('lubridate'))
 
 # source functions ----------------------------------------------------------------------
-source(paste0(rPath, 'postHandling.R')) # TR - Sources fine but ought to check all functions
-source(paste0(rPath, 'checkEvents.R'))   
-source(paste0(rPath, 'checkClimate.R'))
-#source(paste0(rPath, 'calcSapFlow.R'))    # TR - Needs sapflow sensor and data
-#source(paste0(rPath, 'calcRadialGrowth.R')) # TR - Needs dendrometer
-source(paste0(rPath, 'checkPhysiology.R')) 
-source(paste0(rPath, 'checkPhenology.R'))
-source(paste0(rPath, 'checkMorphology.R'))
-source(paste0(rPath, 'checkCommunity.R'))
-source(paste0(rPath, 'generateInteractivity.R'))
+source(paste0(rPath, "postHandling.R")) # TR - Sources fine but ought to check all functions
+source(paste0(rPath, "checkEvents.R"))   
+source(paste0(rPath, "read_kit_data.R"))
+source(paste0(rPath, "checkClimate.R"))
+#source(paste0(rPath, "calcSapFlow.R"))    # TR - Needs sapflow sensor and data
+#source(paste0(rPath, "calcRadialGrowth.R")) # TR - Needs dendrometer
+source(paste0(rPath, "checkPhysiology.R")) 
+source(paste0(rPath, "checkPhenology.R"))
+source(paste0(rPath, "checkMorphology.R"))
+source(paste0(rPath, "checkCommunity.R"))
+source(paste0(rPath, "generateInteractivity.R"))
 print(paste0(Sys.time(), '; rScripts: (1.2)  Dependencies loaded.'))
 
 # source basic data and stats for the trees ---------------------------------------------
