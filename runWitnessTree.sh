@@ -30,7 +30,7 @@ fi
 
 # run bot to post generated messages to twitter and facebook
 #----------------------------------------------------------------------------------------
-python3 ${WITNESSTREEPATH}code/pythonScripts/witnessTreeBot.py ${consumer_key} ${consumer_secret} ${access_token} ${access_token_secret} ${page_access_token} ${facebook_page_id} ${WITNESSTREEPATH}
+python3 ${WITNESSTREEPATH}code/pythonScripts/witnessTreeBot.py ${API_key} ${API_secret} ${access_token} ${access_token_secret} ${page_access_token} ${facebook_page_id} ${WITNESSTREEPATH}
 if [ $? != 0 ]
 then 
    # write error message into log

@@ -23,8 +23,8 @@ from datetime import date, time, datetime, timedelta
 
 # credentials for twitter and facebook
 #----------------------------------------------------------------------------------------
-consumer_key        = sys.argv [1] # twitter accountconsumer key
-consumer_secret     = sys.argv [2] # twitter accountconsumer secrets
+API_key             = sys.argv [1] # twitter accountconsumer key
+API_secret          = sys.argv [2] # twitter accountconsumer secrets
 access_token        = sys.argv [3] # twitter account access token
 access_token_secret = sys.argv [4] # twitter account access token secret
 page_access_token   = sys.argv [5] # facebook page access token
@@ -43,7 +43,7 @@ os.chdir (path)
 
 # authenticate the twitter account
 #----------------------------------------------------------------------------------------
-auth = tweepy.OAuthHandler (consumer_key, consumer_secret)
+auth = tweepy.OAuthHandler (API_key, API_secret)
 auth.set_access_token (access_token, access_token_secret)
 api = tweepy.API (auth)
 
