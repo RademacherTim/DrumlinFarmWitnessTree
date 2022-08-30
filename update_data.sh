@@ -25,13 +25,13 @@ then
 fi
 
 # run the update_pheno_data R script to download phenocam data and images ---------------
-Rscript ${WITNESSTREEPATH}code/rScripts/update_pheno_data.R ${WITNESSTREEPATH}
-if [ $? != 0 ]
-then 
-   # write error message into log
-   echo ${DATE} 'Error: Phenocam data download was not successful.' >> ${WITNESSTREEPATH}logs/logFileDataUpdate.txt 
-   exit 1 # terminate script and indicate error
-fi
+#Rscript ${WITNESSTREEPATH}code/rScripts/update_pheno_data.R ${WITNESSTREEPATH}
+#if [ $? != 0 ]
+#then 
+#   # write error message into log
+#   echo ${DATE} 'Error: Phenocam data download was not successful.' >> ${WITNESSTREEPATH}logs/logFileDataUpdate.txt 
+#   exit 1 # terminate script and indicate error
+#fi
 
 # run the update_witness_tree_data R script to download witness tree kits data ----------
 Rscript ${WITNESSTREEPATH}code/rScripts/update_kit_data.R ${WITNESSTREEPATH}
