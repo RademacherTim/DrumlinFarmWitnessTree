@@ -38,11 +38,19 @@ station <- "KMALINCO3" # Lincoln Center, Lincoln, MA near Drumlin Farm (2014-04-
 #station <- "KMALINCO8" # Brooks Hill, Hanscom Airfield, Lincoln, MA (2018-01-11)
 
 
-# specify the dates of interest ---------------------------------------------------------
-dates <- gsub('-', '', seq(as.Date("2014-04-14"), Sys.Date(), by = "days"))
+# read previously downloaded data -------------------------------------------------------
+hist_data <- read_csv(paste0("../data/",station,"_hist_2014-04-14.csv"),
+                      col_types = cols()) %>% 
+  select(-n, -stationID, -tz, -obsTimeUtc,-epoch, -lat, -lon, -solarRadiationHigh, 
+         -uvHigh, -metric.windchillHigh, -metric.windchillLow, -metric.windchillAvg,
+         -metric.heatindexHigh, -metric.heatindexLow, -metric.heatindexAvg) %>% 
+  rename(datetime = obsTimeLocal)
 
-# do you want the data in daily CSVs or in one CSV for the whole period? FALSE if one CSV, TRUE if daily CSVs.
-daily <- FALSE
+# identify last day of downloaded data --------------------------------------------------
+end_date <- as_date(tail(hist_data$datetime, n = 1))
+
+# specify the dates for which data is still missing -------------------------------------
+dates <- gsub('-', '', seq(end_date, Sys.Date(), by = "days"))
 
 # if TRUE, create a nickname for the output files ---------------------------------------
 date_nickname <- station  # create a nickname for the date range: this will be used for 

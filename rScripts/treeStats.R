@@ -5,7 +5,7 @@
 
 # Set birthday and calculate the age
 #----------------------------------------------------------------------------------------
-birthDay         <- as.POSIXct ("1922/04/10", format = "%Y/%m/%d") # in years C.E.    
+birthDay         <- as.POSIXct ("1897/04/10", format = "%Y/%m/%d") # in years C.E.    
 age              <- floor (lubridate::time_length (Sys.time () - birthDay, "years"))
 
 # LIDAR-derived quantities from scan by Peter Boucher (PhD Candidate, School of 
@@ -44,10 +44,11 @@ meanAnnualCarbonSequestration <- totalCarbon / age
 
 # Location
 #----------------------------------------------------------------------------------------
+treeSpecies       <- "sugar maple (Acer saacharum)" # name of species
 treeLocationName  <- "Drumlin Farm" # name of location of this witnessTree
 treeState         <- "MA"             # name of the state the tree is located in
 treeCountry       <- "USA"            # name of the country the tree is located in
-treeWebPage       <- "" # link to the webpage of this witnessTree
+treeWebPage       <- "https://harvardforest.fas.harvard.edu/witness-tree-social-media-project" # link to the webpage of this witnessTree
 treePrivacyPolicy <- "https://harvardforest.fas.harvard.edu/witness-tree-privacy-policy" # link to the privacy policy
 coreImageLink     <- "" # Needs to be taken!
 contactEmail      <- "HFoutreach@fas.harvard.edu" # email to contact the person in charge
