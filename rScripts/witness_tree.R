@@ -4,7 +4,7 @@
 #
 # Version: 2.0.1
 #
-# Home repository: https://github.com/TTRademacher/HarvardForestWitnessTreeCode
+# Home repository: https://github.com/TTRademacher/DrumlinFarmWitnessTree
 #
 # Project lead: Tim Rademacher (rademacher.tim@gmail.com)
 #
@@ -22,13 +22,6 @@
 # To-do list:
 #----------------------------------------------------------------------------------------
 # TR - Integrate data from the witness tree kit
-#        Sapflow sensor does currently not work
-#        The dendrometer is needed for full functionality of checkDailyPrecipitation ()
-#        Develop new functionality based on the other witness tree kit sensors
-# TR - Add stream gage data for Harvard Forest
-# TR - Add messages based on the snow pillow data from Harvard Forest:
-#       Long period without snow cover in winter
-#       Summaries comparing the winter snow conditions to previous years
 #----------------------------------------------------------------------------------------
 
 # get the absolute path to the directory including images and data ----------------------

@@ -4,9 +4,8 @@
 # meteorological data from the Fisher meteorological station for the the Witness Tree at 
 # Harvard Forest.
 # 
-# Weather data is documented here: 
-#
-# Snow pillow data is documented here:
+# Weather data is from a weatherunderground station with the script largely based on 
+# work by Taylor Jones (wunderground_download.R).
 # 
 #---------------------------------------------------------------------------------------
 
@@ -25,15 +24,85 @@ if (length(args) == 0) {
 # load module specific dependencies -----------------------------------------------------
 if (!existsFunction("esat"))      suppressPackageStartupMessages(library("plantecophys")) # for calculation of vapour pressure deficit
 if (!existsFunction("as_date"))   suppressPackageStartupMessages(library("lubridate"))
-if (!existsFunction("cols"))      suppressPackageStartupMessages(library("readr"))
-if (!existsFunction("tibble"))    suppressPackageStartupMessages(library("tibble"))
-if (!existsFunction("summarise")) suppressPackageStartupMessages(library("dplyr"))
+if (!existsFunction("%>%"))      suppressPackageStartupMessages(library("tidyverse"))
+if (!existsFunction("fromJSON"))  suppressPackageStartupMessages(library("jsonlite"))
 
-# read climate data from the appropriate weather station --------------------------------
+# specify weather station of interest ---------------------------------------------------
+#station <- "KMAWAYLA31"  # Full Moon Farm, Lincoln, MA near Drumlin Farm (only since 2021)
+station <- "KMALINCO3" # Lincoln Center, Lincoln, MA near Drumlin Farm (2014-04-14)
+#station <- "KMACONCO62" # The Champ, Conchord, MA, 
+#station <- "KMACONCO67" # Hubbardville House, Conchord, MA, 
+#station <- "KMALINCO15"  # Tyler's Weather Station #1, Lincoln, MA
+#station <- "KMAWESTO43" # Weston Home, Lincoln
+#station <- "KMAWESTO44" # Ogilvie, Weston
+#station <- "KMALINCO8" # Brooks Hill, Hanscom Airfield, Lincoln, MA (2018-01-11)
 
 
-# create timestamp for each file --------------------------------------------------------
+# specify the dates of interest ---------------------------------------------------------
+dates <- gsub('-', '', seq(as.Date("2014-04-14"), Sys.Date(), by = "days"))
 
+# do you want the data in daily CSVs or in one CSV for the whole period? FALSE if one CSV, TRUE if daily CSVs.
+daily <- FALSE
+
+# if TRUE, create a nickname for the output files ---------------------------------------
+date_nickname <- station  # create a nickname for the date range: this will be used for 
+                          # output file creation
+
+# create and specify the directory where you want the data stored -----------------------
+directory <- paste0("../data/")
+
+# import web address --------------------------------------------------------------------
+geturl <- function(date) {
+  paste0('https://api.weather.com/v2/pws/history/all?stationId=',station,'&format=json&units=m&date=',
+         date,'&apiKey=57ff34cd8d004be1bf34cd8d002be183&numericPrecision=decimal')}
+
+# turn off warnings temporarily ---------------------------------------------------------
+options(warn = -1)
+
+# now run loop to download and read files -----------------------------------------------
+for (d in 1:length(dates)) {
+  print(d)
+  
+  # get the data from online, and then once saved close the connection so it doesn't 
+  # throw a warning --------------------------------------------------------------------
+  raw <- readLines(url(geturl(dates[d])))
+  on.exit(close(url(geturl(dates[d]))))  
+  
+  # clean up headers -------------------------------------------------------------------
+  cleaned <- gsub("\\{\"observations\":", '', raw)
+  cleaned <- substr(cleaned, 1, nchar(cleaned)-1)
+  
+  # convert from JSON into dataframe ---------------------------------------------------
+  dataset <- fromJSON(cleaned, flatten=TRUE) %>% as.data.frame
+  
+  # add a column with the decimal date and decimal hour --------------------------------
+  day <- strptime(dataset$obsTimeLocal,"%Y-%m-%d %H:%M:%S")
+  newcol <-matrix(NA, ncol = 2, nrow = nrow(dataset))
+  colnames(newcol) = c('DeciDate','DeciHour')
+  dataset <- cbind(dataset, newcol)
+  for (x in 1:nrow(dataset)) {
+    dataset[x,]$DeciDate <- (day[x]$yday) + (day[x]$hour/24) + (day[x]$min/(24*60))
+    dataset[x,]$DeciHour <- (day[x]$hour) + (day[x]$min/60) + (day[x]$sec/3600)
+  }
+  
+  # append them together, making one large dataset --------------------------------------
+  if (d == 1) {
+    final <- dataset
+  } else {
+    final <- rbind(final, dataset)
+  }
+  
+  # write the CSV either as one large CSV or as individual CSVs for each date -----------
+  # this was an earlier input
+  if (daily == FALSE) {
+    write.csv(final, file = paste0(directory, date_nickname, ".csv"))
+  } else {
+    write.csv(dataset, file = paste0(directory, dates[d],".csv"))
+  }
+}
+
+# turn warnings back on -----------------------------------------------------------------
+options(warn = 0)
 
 # extract variables of interest ---------------------------------------------------------
 
