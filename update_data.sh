@@ -16,7 +16,7 @@ then
 fi
 
 # run the update_climate.R R script to download climate data ----------------------------
-Rscript ${WITNESSTREEPATH}code/rScripts/update_climate.R ${WITNESSTREEPATH}
+Rscript ${WITNESSTREEPATH}code/rScripts/update_climate.R ${WITNESSTREEPATH} ${WU_API_key}
 if [ $? != 0 ]
 then 
    # write error message into log
