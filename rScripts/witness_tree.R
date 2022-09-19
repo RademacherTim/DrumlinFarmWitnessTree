@@ -12,7 +12,7 @@
 #                   David Basler, Hannah Robbins, Kyle Wyche, Shawna Greyeyes, 
 #                   Bijan Seyednasrollah for their contributions.
 #
-# Last update: 2022-08-04
+# Last update: 2022-09-19
 #
 # Notes on code style: I tried to follow the recommended tidyverse syntax, which can be 
 # found at https://style.tidyverse.org/.
@@ -51,7 +51,7 @@ if (!existsFunction('as_date')) suppressPackageStartupMessages(library('lubridat
 source(paste0(rPath, "postHandling.R")) # TR - Sources fine but ought to check all functions
 source(paste0(rPath, "checkEvents.R"))   
 #source(paste0(rPath, "read_kit_data.R"))
-#source(paste0(rPath, "checkClimate.R"))
+source(paste0(rPath, "checkClimate.R"))
 #source(paste0(rPath, "calcSapFlow.R"))    # TR - Needs sapflow sensor and data
 #source(paste0(rPath, "calcRadialGrowth.R")) # TR - Needs dendrometer
 source(paste0(rPath, "checkPhysiology.R")) 
@@ -91,7 +91,7 @@ posts <- reEvaluatePriorityOf(posts)
 print(paste0(Sys.time(), '; rScritps: (1.6)  Priorities have been re-evaluated.'))
 
 # generate new posts concerning regularly recurrent events ------------------------------
-posts <- helloWorld(posts)                     # on the launch date (2019-07-17) only
+posts <- helloWorld(posts)                     # on the launch date (2019-09-19) only
 posts <- checkNewYears(posts)                  #  1st  of January
 posts <- checkNationalWildLifeDay(posts)       #  4th  of March
 posts <- checkPiDay(posts)                     # 14th of March
@@ -116,28 +116,28 @@ print (paste0 (Sys.time (), '; rScritps: (1.7)  Events have been checked.'))
 
 # generate new posts concerning meteorological & climatic events ------------------------
 posts <- checkExtremeTemperatures(posts) # Test whether it is particularly hot or cold
-posts <- checkExtremePrecipitation(posts) # Test whether it is particularly wet or dry
+#posts <- checkExtremePrecipitation(posts) # Test whether it is particularly wet or dry
 posts <- monthlyClimateSummary(posts) # Summarise and compare last month's climate to
                                       # the long term average.
 posts <- checkFrost(posts) # Check for first frost of autumn and late frost in the early 
                            # growing season.
 posts <- checkHeatWave(posts) # check for a heat wave.
 posts <- checkStorm(posts) # check for storm or rather a windy day.
-posts <- checkHourlyPrecipitation(posts) # check for hourly rainfall above 3.0mm.
+#posts <- checkHourlyPrecipitation(posts) # check for hourly rainfall above 3.0mm.
 # checkDailyPrecipitation relies on dendrometer, so I reduced its functionality for now.
-posts <- checkDailyPrecipitation(posts) # check for daily rainfall above 20.0mm.
-posts <- checkSnowPack(posts) # check for extraordinary snow packs 
+#posts <- checkDailyPrecipitation(posts) # check for daily rainfall above 20.0mm.
+#posts <- checkSnowPack(posts) # check for extraordinary snow packs 
 print(paste0(Sys.time (), '; rScritps: (1.8)  Climatic conditions have been checked.'))
 
 # generate new posts concerning the morphology of the tree ------------------------------
 posts <- explainDimensions(posts)
 
 # generate new posts concerning the community surrounding the tree ----------------------
-posts <- explainSeedDispersal(posts) # give background on seed dispersal between 1 Sep  
-                                     # and end of November
-posts <- explainSpongyMothHerbivory(posts) # give background on spongy moths between 15
+#posts <- explainSeedDispersal(posts) # give background on seed dispersal between 1 Sep  
+                                     # and end of November # TR - Needs to be updated for a mapel tree, i.e., different period of the year, different fruits, etc.
+#posts <- explainSpongyMothHerbivory(posts) # give background on spongy moths between 15
                                            # May and end of August
-posts <- explainGallWasps(posts) # give background about galls
+#posts <- explainGallWasps(posts) # give background about galls
 posts <- checkCommunityWildlife(posts) # post about visitors from the wildlife camera  
 print(paste0(Sys.time(), '; rScritps: (1.9)  Community related messages have been checked.'))
 
@@ -148,8 +148,8 @@ posts <- checkWaxyCuticle(posts)
 print(paste0(Sys.time(), '; rScritps: (1.10) Physiological conditions have been checked.'))
 
 # generate new posts concerning phenology -----------------------------------------------
-posts <- checkLeafColourChange(posts) # Verify leaf colour change from phenocam
-print(paste0(Sys.time(), '; rScritps: (1.11) Phenological conditions have been checked.'))
+#posts <- checkLeafColourChange(posts) # Verify leaf colour change from phenocam
+#print(paste0(Sys.time(), '; rScritps: (1.11) Phenological conditions have been checked.'))
 
 # generate interactive responses --------------------------------------------------------
 IOStatus <- generateInteractiveResponses()

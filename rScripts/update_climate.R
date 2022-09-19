@@ -180,8 +180,8 @@ yearlyAirt   <- add_column(yearlyAirt,   rank = rank(-yearlyAirt$airt))
 #   mutate (day = as_date(datetime, '%Y-%m-%d'))
 # Week determination needs to be debugged
 #prec <- add_column (prec, 
-#                    week  = floor ((airt [['TIMESTAMP']] - 
-#                                      (min (airt [['TIMESTAMP']], na.rm = T) -
+#                    week  = floor ((airt$datetime - 
+#                                      (min (airt$datetime, na.rm = T) -
 #                                         2 * 60.0 * 60.0 * 24.0)) / dweeks (1))) 
 # prec <- add_column (prec, month = floor_date (prec$datetime, 'month'))
 # prec <- add_column (prec, year  = floor_date (prec$datetime, 'year'))

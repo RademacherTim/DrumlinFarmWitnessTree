@@ -39,27 +39,27 @@
 # read in instantaneous weather data ----------------------------------------------------
 airt <- read_csv(file = paste0(path,'data/airt.csv'), col_types = cols())
 gust <- read_csv(file = paste0(path,'data/gust.csv'), col_types = cols())
-prec <- read_csv(file = paste0(path,'data/prec.csv'), col_types = cols())
-snow <- read_csv(file = paste0(path,'data/snow.csv'), col_types = cols())
+#prec <- read_csv(file = paste0(path,'data/prec.csv'), col_types = cols())
+#snow <- read_csv(file = paste0(path,'data/snow.csv'), col_types = cols())
 # daily
 dailyAirt <- read_csv (file = paste0 (path,'data/dailyAirt.csv'), col_types = cols ())
 dailyMaxAirt <- read_csv (file = paste0 (path,'data/dailyMaxAirt.csv'), col_types = cols ())
-dailyPrec <- read_csv (file = paste0 (path,'data/dailyPrec.csv'), col_types = cols ())
+#dailyPrec <- read_csv (file = paste0 (path,'data/dailyPrec.csv'), col_types = cols ())
 dailyReHu <- read_csv (file = paste0 (path,'data/dailyReHu.csv'), col_types = cols ())
-dailySnow <- read_csv (file = paste0 (path,'data/dailySnow.csv'), col_types = cols ())
+#dailySnow <- read_csv (file = paste0 (path,'data/dailySnow.csv'), col_types = cols ())
 dailyVPD <- read_csv (file = paste0 (path,'data/dailyVPD.csv'), col_types = cols ())
 dailyWind <- read_csv (file = paste0 (path,'data/dailyWind.csv'), col_types = cols ())
 # weekly
-weeklyAirt <- read_csv (file = paste0 (path,'data/weeklyAirt.csv'), col_types = cols ())
-weeklyPrec <- read_csv (file = paste0 (path,'data/weeklyPrec.csv'), col_types = cols ())
-weeklySnow <- read_csv (file = paste0 (path,'data/weeklySnow.csv'), col_types = cols ())
+#weeklyAirt <- read_csv (file = paste0 (path,'data/weeklyAirt.csv'), col_types = cols ())
+#weeklyPrec <- read_csv (file = paste0 (path,'data/weeklyPrec.csv'), col_types = cols ())
+#weeklySnow <- read_csv (file = paste0 (path,'data/weeklySnow.csv'), col_types = cols ())
 # monthly
 monthlyAirt <- read_csv (file = paste0 (path,'data/monthlyAirt.csv'), col_types = cols ())
-monthlyPrec <- read_csv (file = paste0 (path,'data/monthlyPrec.csv'), col_types = cols ())
-monthlySnow <- read_csv (file = paste0 (path,'data/monthlySnow.csv'), col_types = cols ())
+#monthlyPrec <- read_csv (file = paste0 (path,'data/monthlyPrec.csv'), col_types = cols ())
+#monthlySnow <- read_csv (file = paste0 (path,'data/monthlySnow.csv'), col_types = cols ())
 # yearly
 yearlyAirt <- read_csv (file = paste0 (path,'data/yearlyAirt.csv'), col_types = cols ())
-yearlyPrec <- read_csv (file = paste0 (path,'data/yearlyPrec.csv'), col_types = cols ())
+#yearlyPrec <- read_csv (file = paste0 (path,'data/yearlyPrec.csv'), col_types = cols ())
 
 # convert degrees Celsius to Fahrenheit
 #----------------------------------------------------------------------------------------

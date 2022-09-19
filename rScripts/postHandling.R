@@ -161,10 +161,10 @@ getPostDetails <- function (fName) {
   # need to have the same number of messages for both treatments (sober scientific data 
   # versus narrative environmental facts).
   #---------------------------------------------------------------------------------------
-  if (dim (temp) [1] > 1) temp <- sample_n (temp, 1)
-  
+  if (dim(temp)[1] > 1) temp <- sample_n(temp, 1)
+
   # extract relevant post details --------------------------------------------------------
-  postDetails <- temp %>% dplyr::select (-c (Status, Event, Logic, Variables, 
+  postDetails <- temp %>% dplyr::select (-c (Event, Logic, Variables, 
                                              VariablesExamples, Link, 
                                              NumberOfCharacters))
   
