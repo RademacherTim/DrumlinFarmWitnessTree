@@ -42,7 +42,7 @@ station <- "KMALINCO3" # Lincoln Center, Lincoln, MA near Drumlin Farm (2014-04-
 daily <- FALSE
 
 # read previously downloaded data -------------------------------------------------------
-hist_data <- read_csv(paste0("./data/",station,"_hist_2014-04-14.csv"),
+hist_data <- read_csv(paste0(path,"data/",station,"_hist.csv"),
                       col_types = cols()) 
 
 # identify last day of downloaded data --------------------------------------------------
@@ -133,7 +133,7 @@ if (end_datetime2 > end_datetime) {
 }
 
 # save copy of updated data -------------------------------------------------------------
-write_csv(hist_data, file = "./data/KMALINCO3_hist_2014-04-14.csv")
+write_csv(hist_data, file = paste0(path,"data/",station,"_hist.csv"))
 
 # add variable for different aggregation periods to airt (i.e. day, week, month, year)
 #----------------------------------------------------------------------------------------
