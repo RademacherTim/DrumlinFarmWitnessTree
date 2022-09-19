@@ -14,7 +14,7 @@ args = commandArgs(trailingOnly = TRUE)
 if (length(args) == 0) {
   stop("Error: At least one argument must be supplied (path to witnessTree directory).",
         call. = FALSE)
-} else if (length(args) >= 1) {
+} else if (length(args) >= 2) {
   path = args[1] # absolute path
   WU_API_key = args[2] # weather underground API key
 } else {
@@ -268,7 +268,9 @@ rm (#additional_data,
     dailyReHu, dailyVPD, 
     dailyWind, dataset, day, final, gust, hist_data, monthlyAirt, 
     #monthlyPrec, 
-    newcol, prec, rehu, temp, wind, yearlyAirt, 
+    newcol, 
+  #prec, 
+  rehu, temp, wind, yearlyAirt, 
     #yearlyPrec, 
     d, date_nickname, dates, 
     end_date, end_datetime, end_datetime2, path, raw, station, WU_API_key)
