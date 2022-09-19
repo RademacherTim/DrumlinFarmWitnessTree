@@ -242,11 +242,11 @@ dailyVPD <- tibble (day = dailyReHu$day,
 # write csv files of the main variables -------------------------------------------------
 readr::write_csv (x = airt, file = sprintf ("%sdata/airt.csv", path))
 readr::write_csv (x = gust, file = sprintf ("%sdata/gust.csv", path))
-readr::write_csv (x = prec, file = sprintf ("%sdata/prec.csv", path))
+#readr::write_csv (x = prec, file = sprintf ("%sdata/prec.csv", path))
 
 readr::write_csv (x = dailyAirt, file = sprintf ("%sdata/dailyAirt.csv", path))
 readr::write_csv (x = dailyMaxAirt, file = sprintf ("%sdata/dailyMaxAirt.csv", path))
-readr::write_csv (x = dailyPrec, file = sprintf ("%sdata/dailyPrec.csv", path))
+#readr::write_csv (x = dailyPrec, file = sprintf ("%sdata/dailyPrec.csv", path))
 readr::write_csv (x = dailyReHu, file = sprintf ("%sdata/dailyReHu.csv", path))
 readr::write_csv (x = dailyVPD, file = sprintf ("%sdata/dailyVPD.csv", path))
 readr::write_csv (x = dailyWind, file = sprintf ("%sdata/dailyWind.csv", path))
@@ -256,14 +256,20 @@ readr::write_csv (x = dailyWind, file = sprintf ("%sdata/dailyWind.csv", path))
 #readr::write_csv (x = weeklySnow, file = sprintf ("%sdata/weeklySnow.csv", path))
 
 readr::write_csv (x = monthlyAirt, file = sprintf ("%sdata/monthlyAirt.csv", path))
-readr::write_csv (x = monthlyPrec, file = sprintf ("%sdata/monthlyPrec.csv", path))
+#readr::write_csv (x = monthlyPrec, file = sprintf ("%sdata/monthlyPrec.csv", path))
 
 readr::write_csv (x = yearlyAirt, file = sprintf ("%sdata/yearlyAirt.csv", path))
-readr::write_csv (x = yearlyPrec, file = sprintf ("%sdata/yearlyPrec.csv", path))
+#readr::write_csv (x = yearlyPrec, file = sprintf ("%sdata/yearlyPrec.csv", path))
 
 # delete temporary variables ------------------------------------------------------------
-rm (additional_data, airt, dailyAirt, dailyMaxAirt, dailyPrec, dailyReHu, dailyVPD, 
-    dailyWind, dataset, day, final, gust, hist_data, monthlyAirt, monthlyPrec, 
-    newcol, prec, rehu, temp, wind, yearlyAirt, yearlyPrec, d, date_nickname, dates, 
+rm (#additional_data, 
+  airt, dailyAirt, dailyMaxAirt, 
+    #dailyPrec, 
+    dailyReHu, dailyVPD, 
+    dailyWind, dataset, day, final, gust, hist_data, monthlyAirt, 
+    #monthlyPrec, 
+    newcol, prec, rehu, temp, wind, yearlyAirt, 
+    #yearlyPrec, 
+    d, date_nickname, dates, 
     end_date, end_datetime, end_datetime2, path, raw, station, WU_API_key)
 #========================================================================================
